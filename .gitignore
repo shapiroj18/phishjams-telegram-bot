@@ -1,5 +1,6 @@
 # Mine
 instance/
+.DS_Store
 
 # .gitignore template below from - https://github.com/github/gitignore/blob/master/Python.gitignore
 
