@@ -4,6 +4,8 @@ Commands:
 1. `PHISH <YEAR>` returns a random phish jam from that year
 
 Notes:
+Environmental variables are stored as [heroku config vars](https://devcenter.heroku.com/articles/config-vars)
+
 There is a gitignore for `instance/`. In this folder lives a file called `config.py` that holds credentials with the format:
 ```
 API_KEY= <API_KEY>

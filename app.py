@@ -7,7 +7,7 @@ app.config.from_object('config')
 
 @app.route("/")
 def hello():
-    return f"{os.environ.get('TEST')"
+    return f"{os.environ.get('TEST')}"
 
 @app.route("/<name>")
 def hello_name(name):
