@@ -2,14 +2,14 @@ import os
 import json
 import requests
 
-api_key = os.environ.get('PHISHNET_API_KEY')
+api_key = os.environ.get('PHISHNET_API_KEY') 
 
-class PhishNetAPI:
+class PhishNetAPI():
     
     def __init__(self):
         self.api_key = api_key
 
-    def get_all_jamcharts(self) -> str:
+    def get_all_jamcharts(self):
         phishnet_endpoint = f'https://api.phish.net/v3/jamcharts/all'
 
         payload = {
@@ -21,7 +21,13 @@ class PhishNetAPI:
             params=payload
         )
         
-        parsed = json.loads(response.text)
-        json_obj = json.dumps(parsed, indent=4)
+        return response.json()
+    
+    def get_jamchart_songs(self):
+        response = self.get_all_jamcharts()
         
-        return json_obj
+        all_jamchart_songs = []
+        for item in response['response']['data']:
+            all_jamchart_songs.append(item['song'].lower())
+        
+        return all_jamchart_songs
