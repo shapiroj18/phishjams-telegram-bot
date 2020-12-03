@@ -11,12 +11,7 @@ Notes:
 Environmental variables are stored as [heroku config vars](https://devcenter.heroku.com/articles/config-vars)
 
 The environmental variables stored are:
-1. BOT_TOKEN=`bot_token`
-2. BOT_USERNAME=`username`
-3. URL=`url`
-
-There is a gitignore for `instance/`. In this folder lives a file called `config.py` that holds credentials with the format:
-```
-API_KEY= <API_KEY>
-OTHER_API_KEY= <API_KEY>
-```
+1. BOT_TOKEN=`bot_token` (token for `@gone_phishing_bot` from BotFather)
+2. BOT_USERNAME=`username` (username for `@gone_phishing_bot` from BotFather)
+3. URL=`url` (url of heroku app)
+4. PHISHNET_API_KEY=`api_key` (API Key for Phish.Net, [retrieved here](https://api.phish.net/request-key))

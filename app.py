@@ -4,7 +4,7 @@ import re
 
 from flask import Flask, request
 
-from phish_bot.phishnet_api import test
+from phish_bot.phishnet_api import PhishNetAPI
 
 auth_key = os.environ.get('BOT_TOKEN')
 url = os.environ.get('URL')
@@ -54,7 +54,7 @@ def respond():
         # lookup jam chart
         # random date in jam chart
         # send info about show on phish.net and relisten and/or phish.in link to song
-        message = test.test_fun()
+        message = PhishNetAPI.get_all_jamcharts()[1]
         bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
         
     else:
