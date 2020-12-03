@@ -4,7 +4,7 @@ import re
 
 from flask import Flask, request
 
-from phishnet_api import test
+from phish_bot.phishnet_api import test
 
 auth_key = os.environ.get('BOT_TOKEN')
 url = os.environ.get('URL')
