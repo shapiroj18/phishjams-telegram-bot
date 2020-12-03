@@ -20,3 +20,8 @@ The environmental variables stored are:
 
 To Do:
 1. Make sure json responses for required functions are not more than one page with if/else
+2. Set option for only soundboards?
+3. Make date format acceptance broader than just YYYY-MM-DD
+4. Pytest
+5. Mypy
+6. Black

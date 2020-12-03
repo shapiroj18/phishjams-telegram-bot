@@ -13,6 +13,7 @@ url = os.environ.get('URL')
 bot = telegram.Bot(token=auth_key)
 
 phishnet_api = PhishNetAPI()
+phishin_api = PhishINAPI()
 
 welcome_message = """
 \U0001F420 Welcome to the Phish Bot. Make sure you have the Relisten App installed.
@@ -53,6 +54,13 @@ def respond():
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
+    elif text == '/mp3':
+        response = phishin_api.get_song_url('2018-12-29', 'Carini')
+        if response.startswith('http://'):
+            bot.sendAudio(chat_id=chat_id, audio=audio_url, caption=caption)
+        else:
+            bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
+        
     elif text == "/random":
         # should be able to enter random or year or song name
         # lookup jam chart
@@ -61,7 +69,7 @@ def respond():
             # for relisten: get url from inspect > network (refresh page) > year (YYYY-MM-DD) > source_id (maybe in sources['review_count']['sets']['source_id'])
         response = phishnet_api.get_jamchart_songs()
         relisten_url = 'https://relisten.net/phish/1991/12/04/david-bowie?source=162594'
-        message = f"Your song is{response[1]}"
+        message = f"Your song is {response[1]}"
         audio_url = 'https://phish.in/audio/000/031/671/31671.mp3'
         caption = "Ya Mar 1999-03-05"
         

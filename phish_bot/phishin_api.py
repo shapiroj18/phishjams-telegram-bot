@@ -9,8 +9,8 @@ class PhishINAPI():
     def __init__(self):
         self.api_key = api_key
 
-    def get_show_on_date(self):
-        phishin_endpoint = 'http://phish.in/api/v1/show-on-date/:2009-10-29.json'
+    def get_show_on_date(self, date):
+        phishin_endpoint = f'http://phish.in/api/v1/show-on-date/:{date}.json'
         
         headers = {
         'Authorization': f'Bearer {api_key}'
@@ -27,3 +27,19 @@ class PhishINAPI():
         )
         
         return response.json()
+    
+    def get_song_url(self, date, song):
+        
+        response = self.get_show_on_date(date=date)
+        if response['success'] == False:
+            return 'Date was not found, please enter in "YYYY-MM-DD" format'
+        
+        else:
+            show_tracks = response['data']['tracks']
+            
+            mp3 = f'No mp3 for the song "{song}." Did you spell it right?'
+            for item in show_tracks:
+                if item['title'] == song:
+                    mp3 = item['mp3']
+        
+            return mp3
