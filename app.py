@@ -12,7 +12,7 @@ bot = telegram.Bot(token=auth_key)
 welcome_message = """
 \U0001F420 Welcome to the Phish Bot. See command below!
 
-1. PHISH <YEAR> to get a random jam from that year
+1. /logo returns the classic rainbow logo
 """
 
 # Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
@@ -43,16 +43,16 @@ def respond():
         
         bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
         
-    elif text == "/LOGO":
+    elif text == "/logo":
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
-        bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420")
+        bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
     else:
         try:
             text = re.sub(r"/W", "_", text)
             
             url = f"https://en.wikipedia.org/wiki/Brown_bear#/media/File:2010-kodiak-bear-1.jpg"
-            bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id)
+            bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420"
         except Exception:
             bot.sendMessage(chat_id=chat_id, text="There was a problem in the name you used, please use a different name", reply_to_message_id=msg_id)
     
