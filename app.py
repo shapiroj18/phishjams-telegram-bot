@@ -14,8 +14,9 @@ bot = telegram.Bot(token=auth_key)
 phishnet_api = PhishNetAPI()
 
 welcome_message = """
-\U0001F420 Welcome to the Phish Bot. See command below!
+\U0001F420 Welcome to the Phish Bot. Make sure you have the Relisten App installed.
 
+See commands below!
 1. /logo returns the classic rainbow logo
 """
 
