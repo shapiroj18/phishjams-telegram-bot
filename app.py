@@ -52,7 +52,7 @@ def respond():
             text = re.sub(r"/W", "_", text)
             
             url = f"https://en.wikipedia.org/wiki/Brown_bear#/media/File:2010-kodiak-bear-1.jpg"
-            bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420"
+            bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420")
         except Exception:
             bot.sendMessage(chat_id=chat_id, text="There was a problem in the name you used, please use a different name", reply_to_message_id=msg_id)
     
