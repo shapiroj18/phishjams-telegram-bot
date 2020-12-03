@@ -11,6 +11,8 @@ url = os.environ.get('URL')
 
 bot = telegram.Bot(token=auth_key)
 
+phishnet_api = PhishNetAPI()
+
 welcome_message = """
 \U0001F420 Welcome to the Phish Bot. See command below!
 
@@ -54,7 +56,7 @@ def respond():
         # lookup jam chart
         # random date in jam chart
         # send info about show on phish.net and relisten and/or phish.in link to song
-        message = PhishNetAPI.get_all_jamcharts()[1]
+        message = phishnet_api.get_all_jamcharts()[1]
         bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
         
     else:
