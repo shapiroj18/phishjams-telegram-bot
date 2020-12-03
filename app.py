@@ -58,7 +58,10 @@ def respond():
         # send info about show on phish.net and relisten and/or phish.in link to song
             # for relisten: get url from inspect > network (refresh page) > year (YYYY-MM-DD) > source_id (maybe in sources['review_count']['sets']['source_id'])
         response = phishnet_api.get_jamchart_songs()
-        bot.sendMessage(chat_id=chat_id, text=response[1], reply_to_message_id=msg_id)
+        relisten_url = 'https://relisten.net/phish/1991/12/04/david-bowie?source=162594'
+        message = f"Your song is{response[1]} and the link is at {relisten_url}"
+        
+        bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
         
     else:
         try:
