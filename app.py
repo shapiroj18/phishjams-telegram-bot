@@ -19,7 +19,7 @@ welcome_message = """
 \U0001F420 Welcome to the Phish Bot. Make sure you have the Relisten App installed.
 
 See commands below!
-1. /logo returns the classic rainbow logo
+1. `logo` returns the classic rainbow logo
 """
 
 # Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
@@ -48,13 +48,13 @@ def respond():
     if text == "/start":
         bot_welcome = welcome_message
         
-        bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
+        bot.sendMessage(chat_id=chat_id, text=bot_welcome, parse_mode='Markdown' reply_to_message_id=msg_id)
         
-    elif text == "/logo":
+    elif text == "logo":
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
-    elif text.startswith('/mp3'):
+    elif text.startswith('mp3'):
         # text must be of the format "/mp3 YYYY-MM-DD song_name"
         parsed_text = text.split(', ')
         if len(parsed_text) == 3:
@@ -65,10 +65,10 @@ def respond():
             else:
                 bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
         else:
-            response = 'The command must look like "/mp3, song name, YYYY-MM-DD." For example:\n "/mp3 Carini 2018-12-28"'
+            response = 'The command must look like "mp3, song name, YYYY-MM-DD." For example:\n "mp3, Carini, 2018-12-28"'
             bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
         
-    elif text == "/random":
+    elif text == "random":
         # should be able to enter random or year or song name
         # lookup jam chart
         # random date in jam chart
