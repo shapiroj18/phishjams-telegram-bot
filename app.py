@@ -4,6 +4,8 @@ import re
 
 from flask import Flask, request
 
+from phishnet_api import test
+
 auth_key = os.environ.get('BOT_TOKEN')
 url = os.environ.get('URL')
 
@@ -36,7 +38,7 @@ def respond():
     
     text = update.message.text.encode('utf-8').decode()
     
-    print("got text message: ", text)
+    print("got message: ", text)
     
     if text == "/start":
         bot_welcome = welcome_message
@@ -46,6 +48,14 @@ def respond():
     elif text == "/logo":
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
+        
+    elif text == "/random":
+        # should be able to enter random or year or song name
+        # lookup jam chart
+        # random date in jam chart
+        # send info about show on phish.net and relisten and/or phish.in link to song
+        message = test.test_fun()
+        bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
         
     else:
         try:
