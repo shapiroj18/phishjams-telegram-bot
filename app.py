@@ -5,6 +5,7 @@ import re
 from flask import Flask, request
 
 from phish_bot.phishnet_api import PhishNetAPI
+from phish_bot.phishin_api import PhishINAPI
 
 auth_key = os.environ.get('BOT_TOKEN')
 url = os.environ.get('URL')
@@ -60,9 +61,12 @@ def respond():
             # for relisten: get url from inspect > network (refresh page) > year (YYYY-MM-DD) > source_id (maybe in sources['review_count']['sets']['source_id'])
         response = phishnet_api.get_jamchart_songs()
         relisten_url = 'https://relisten.net/phish/1991/12/04/david-bowie?source=162594'
-        message = f"Your song is{response[1]} and the link is at {relisten_url}"
+        message = f"Your song is{response[1]}"
+        audio_url = 'https://phish.in/audio/000/031/671/31671.mp3'
+        caption = "Ya Mar 1999-03-05"
         
         bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
+        bot.sendAudio(chat_id=chat_id, audio=audio_url, caption=caption)
         
     else:
         try:

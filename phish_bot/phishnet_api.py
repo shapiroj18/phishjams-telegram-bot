@@ -10,7 +10,7 @@ class PhishNetAPI():
         self.api_key = api_key
 
     def get_all_jamcharts(self):
-        phishnet_endpoint = f'https://api.phish.net/v3/jamcharts/all'
+        phishnet_endpoint = 'https://api.phish.net/v3/jamcharts/all'
 
         payload = {
             'apikey': api_key,
