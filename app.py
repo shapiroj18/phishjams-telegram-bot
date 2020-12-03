@@ -16,7 +16,7 @@ phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
 
 welcome_message = """
-\U0001F420 Welcome to the Phish Bot. Make sure you have the Relisten App installed.
+\U0001F420 Welcome to the Phish Bot!
 
 See commands below!
 1. `logo` returns the classic rainbow logo
@@ -54,19 +54,19 @@ def respond():
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
-    elif text.startswith('mp3'):
+    elif text.lower().startswith('mp3'):
         # text must be of the format "/mp3 YYYY-MM-DD song_name"
-        parsed_text = text.split(', ')
+        parsed_text = text.lower().split(', ')
         if len(parsed_text) == 3:
             response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
             if response.startswith('http://'):
                 caption = f'{parsed_text[1]} {parsed_text[2]}'
                 bot.sendAudio(chat_id=chat_id, audio=response, caption=caption)
             else:
-                bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
+                bot.sendMessage(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
         else:
-            response = 'The command must look like "mp3, song name, YYYY-MM-DD." For example:\n "mp3, Carini, 2018-12-28"'
-            bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
+            response = 'The command must look like \n`mp3, song name, YYYY-MM-DD`'
+            bot.sendMessage(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
         
     elif text == "random":
         # should be able to enter random or year or song name

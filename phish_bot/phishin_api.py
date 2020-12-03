@@ -37,9 +37,9 @@ class PhishINAPI():
         else:
             show_tracks = response['data']['tracks']
             
-            mp3 = f'No mp3 for the song "{song}." Did you spell it right?'
+            mp3 = f'No mp3 for the song "{song}." Was the song spelled right and played on {date}?'
             for item in show_tracks:
-                if item['title'] == song:
+                if item['title'].lower() == song:
                     mp3 = item['mp3']
         
             return mp3
