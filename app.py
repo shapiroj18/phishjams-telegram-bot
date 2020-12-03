@@ -10,7 +10,7 @@ url = os.environ.get('URL')
 bot = telegram.Bot(token=auth_key)
 
 welcome_message = """
-Welcome to the Phish Bot. See command below!
+\U0001F420 Welcome to the Phish Bot. See command below!
 
 1. PHISH <YEAR> to get a random jam from that year
 """
@@ -42,6 +42,10 @@ def respond():
         bot_welcome = welcome_message
         
         bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
+        
+    elif text == "/LOGO":
+        logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
+        bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420")
         
     else:
         try:
