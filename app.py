@@ -54,11 +54,18 @@ def respond():
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
-    elif text == '/mp3':
-        response = phishin_api.get_song_url('2018-12-29', 'Carini')
-        if response.startswith('http://'):
-            bot.sendAudio(chat_id=chat_id, audio=audio_url, caption=caption)
+    elif text.startswith('/mp3'):
+        # text must be of the format "/mp3 YYYY-MM-DD song_name"
+        parsed_text = text.split(', ')
+        if len(parsed_text) == 3:
+            response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
+            if response.startswith('http://'):
+                caption = f'{parsed_text[1]} {parsed_text[2]}'
+                bot.sendAudio(chat_id=chat_id, audio=response, caption=caption)
+            else:
+                bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
         else:
+            response = 'The command must look like "/mp3, song name, YYYY-MM-DD." For example:\n "/mp3 Carini 2018-12-28"'
             bot.sendMessage(chat_id=chat_id, text=response, reply_to_message_id=msg_id)
         
     elif text == "/random":

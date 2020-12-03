@@ -28,7 +28,7 @@ class PhishINAPI():
         
         return response.json()
     
-    def get_song_url(self, date, song):
+    def get_song_url(self, song, date):
         
         response = self.get_show_on_date(date=date)
         if response['success'] == False:
