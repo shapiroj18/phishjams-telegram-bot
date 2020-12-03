@@ -56,6 +56,7 @@ def respond():
         # lookup jam chart
         # random date in jam chart
         # send info about show on phish.net and relisten and/or phish.in link to song
+            # for relisten: get url from inspect > network (refresh page) > year (YYYY-MM-DD) > source_id (maybe in sources['review_count']['sets']['source_id'])
         response = phishnet_api.get_jamchart_songs()
         bot.sendMessage(chat_id=chat_id, text=response[1], reply_to_message_id=msg_id)
         
