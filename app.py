@@ -49,13 +49,13 @@ def respond():
     
     if text == "/start":
         bot_welcome = welcome_message
-        bot.sendChatAction(chat_id=chat_id, action="typing")
+        bot.send_chat_action(chat_id=chat_id, action="typing")
         sleep(1.5)
-        bot.sendMessage(chat_id=chat_id, text=bot_welcome, parse_mode='Markdown', reply_to_message_id=msg_id)
+        bot.send_message(chat_id=chat_id, text=bot_welcome, parse_mode='Markdown', reply_to_message_id=msg_id)
         
     elif text == "logo":
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
-        bot.sendPhoto(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
+        bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
     elif text.lower().startswith('mp3'):
         # text must be of the format "/mp3 YYYY-MM-DD song_name"
@@ -64,12 +64,12 @@ def respond():
             response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
             if response.startswith('http://'):
                 caption = f'{parsed_text[1]} {parsed_text[2]}'
-                bot.sendAudio(chat_id=chat_id, audio=response, caption=caption)
+                bot.send_audio(chat_id=chat_id, audio=response, caption=caption)
             else:
-                bot.sendMessage(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
+                bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
         else:
             response = 'The command must look like \n`mp3, song name, YYYY-MM-DD`'
-            bot.sendMessage(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
+            bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
         
     elif text == "random":
         # should be able to enter random or year or song name
@@ -83,17 +83,17 @@ def respond():
         audio_url = 'https://phish.in/audio/000/031/671/31671.mp3'
         caption = "Ya Mar 1999-03-05"
         
-        bot.sendMessage(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
-        bot.sendAudio(chat_id=chat_id, audio=audio_url, caption=caption)
+        bot.send_message(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
+        bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
         
     else:
         try:
             text = re.sub(r"/W", "_", text)
             
             url = f"https://en.wikipedia.org/wiki/Brown_bear#/media/File:2010-kodiak-bear-1.jpg"
-            bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420")
+            bot.send_photo(chat_id=chat_id, photo=url, reply_to_message_id=msg_id, caption="Not a phishable command \U0001F420")
         except Exception:
-            bot.sendMessage(chat_id=chat_id, text="There was a problem in the name you used, please use a different name", reply_to_message_id=msg_id)
+            bot.send_message(chat_id=chat_id, text="There was a problem in the name you used, please use a different name", reply_to_message_id=msg_id)
     
     return 'ok'
 
