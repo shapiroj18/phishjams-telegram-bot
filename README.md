@@ -25,3 +25,4 @@ To Do:
 4. Pytest
 5. Mypy
 6. Black
+7. Phish Trivia Game!

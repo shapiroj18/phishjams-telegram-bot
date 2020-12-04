@@ -19,7 +19,8 @@ welcome_message = """
 \U0001F420 Welcome to the Phish Bot!
 
 See commands below!
-1. `logo` returns the classic rainbow logo
+`logo`: returns the classic rainbow logo
+`mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
 """
 
 # Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
@@ -32,7 +33,7 @@ def index():
 
 @app.route("/Phish")
 def phish():
-    pass
+    return render_template("base.html")
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
