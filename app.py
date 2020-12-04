@@ -34,7 +34,7 @@ def index():
 
 @app.route("/phish")
 def phish():
-    return 'ok' # render_template("base.html")
+    return render_template("base.html")
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
