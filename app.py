@@ -1,7 +1,7 @@
 import os
 import telegram
 import re
-import sleep
+from time import sleep
 
 from flask import Flask, request, render_template
 
