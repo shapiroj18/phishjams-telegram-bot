@@ -1,6 +1,7 @@
 import os
 import telegram
 import re
+import sleep
 
 from flask import Flask, request, render_template
 
@@ -48,7 +49,8 @@ def respond():
     
     if text == "/start":
         bot_welcome = welcome_message
-        
+        bot.sendChatAction(chat_id=chat_id, action="typing")
+        sleep(1.5)
         bot.sendMessage(chat_id=chat_id, text=bot_welcome, parse_mode='Markdown', reply_to_message_id=msg_id)
         
     elif text == "logo":
