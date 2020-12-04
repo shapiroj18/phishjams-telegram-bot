@@ -43,21 +43,19 @@ def respond():
     chat_id = update.message.chat.id
     msg_id = update.message.message_id
     
-    text = update.message.text.encode('utf-8').decode()
+    text = update.message.text.encode('utf-8').decode().lower()
     
     print("got message: ", text)
     
     if text == "/start":
         bot_welcome = welcome_message
-        bot.send_chat_action(chat_id=chat_id, action="typing")
-        sleep(1.5)
         bot.send_message(chat_id=chat_id, text=bot_welcome, parse_mode='Markdown', reply_to_message_id=msg_id)
         
     elif text == "logo":
         logo_url = 'http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg'
         bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
-    elif text.lower().startswith('mp3'):
+    elif text.startswith('mp3'):
         # text must be of the format "/mp3 YYYY-MM-DD song_name"
         parsed_text = text.lower().split(', ')
         if len(parsed_text) == 3:
@@ -107,9 +105,9 @@ def set_webhook():
         return "webhook setup failed"
     
 
-@app.route("/<name>")
-def hello_name(name):
-    return f"hello {name}"
+# @app.route("/<name>")
+# def hello_name(name):
+#     return f"hello {name}"
 
 if __name__ == '__main__':
     app.run(threaded=True)
