@@ -2,7 +2,7 @@ import os
 import telegram
 import re
 
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
@@ -31,7 +31,7 @@ app = Flask(__name__)
 def index():
     return '.'
 
-@app.route("/Phish")
+@app.route("/phish")
 def phish():
     return render_template("base.html")
 
