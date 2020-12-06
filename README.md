@@ -5,8 +5,7 @@ The bot is called `@gone_phishing_bot`
 Deployed at `https://phish-telegram-bot.herokuapp.com/`
 
 Commands:
-1. `/phish <YEAR>` returns a random phish jam from that year
-2. `/phish mjm` subsribes you to mjm
+Still in development
 
 Notes:
 Environmental variables are stored as [heroku config vars](https://devcenter.heroku.com/articles/config-vars)
@@ -26,5 +25,5 @@ To Do:
 5. Mypy
 6. Black
 7. Phish Trivia Game!
-8. `make dev` Makefile
+8. `make dev` Makefile, include setting up environment if doesn't exist, logging in to heroku if not logged in (try if/else statement) and then export creds to environment
 9. Create md file for commands
