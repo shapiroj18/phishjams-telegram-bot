@@ -8,16 +8,14 @@ api_key = os.environ.get("PHISHNET_API_KEY")
 class PhishNetAPI:
     def __init__(self):
         self.api_key = api_key
-        
+
     def get_root_endpoint(self):
         phishnet_endpoint = "https://api.phish.net/v3/"
-        
-        payload = {
-            'apikey': api_key
-        }
-        
+
+        payload = {"apikey": api_key}
+
         response = requests.get(url=phishnet_endpoint, params=payload)
-        
+
         return response
 
     def get_all_jamcharts(self):
