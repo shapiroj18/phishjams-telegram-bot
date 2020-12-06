@@ -61,10 +61,10 @@ def respond():
         if len(parsed_text) == 3:
             response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
             if response.startswith('http'):
-                links_text = f' \
-                You can find info for the show at phish.net:  \ [{parsed_text[2]}]({phishnet_api.get_show_url(parsed_text[2])}) \
-                You can find audio for the full show at phish.in: [{parsed_text[2]}](phish.in/{parsed_text[2]}) \
-                '
+                links_text = f""" \
+                You can find info for the show at [phish.net]({phishnet_api.get_show_url(parsed_text[2])}) \
+                You can find audio for the full show at [phish.in](phish.in/{parsed_text[2]}) \
+                """
                 bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
                 bot.send_audio(chat_id=chat_id, audio=response)
             else:

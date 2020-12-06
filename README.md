@@ -27,3 +27,4 @@ To Do:
 6. Black
 7. Phish Trivia Game!
 8. `make dev` Makefile
+9. Create md file for commands
