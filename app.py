@@ -12,7 +12,6 @@ auth_key = os.environ.get('BOT_TOKEN')
 url = os.environ.get('URL')
 
 bot = telegram.Bot(token=auth_key)
-
 phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
 
@@ -64,7 +63,7 @@ def respond():
             if response.startswith('http'):
                 caption = f'{parsed_text[1]} {parsed_text[2]}'
                 links_text = f' \
-                You can find info for the show at phish.net:  \ [{parsed_text[2]}](phish.in/{parsed_text[2]})
+                You can find info for the show at phish.net:  \ [{parsed_text[2]}]({phishnet_api.get_show_url(parsed_text[2])})
                 You can find audio for the full show at phish.in: [{parsed_text[2]}](phish.in/{parsed_text[2]}) \
                 '
                 bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
