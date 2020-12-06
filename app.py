@@ -62,8 +62,8 @@ def respond():
             response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
             if response.startswith('http://'):
                 caption = f'{parsed_text[1]} {parsed_text[2]}'
-                links_text = """
-                You can find info for the show at phish.net: Test
+                links_text = f"""
+                You can find info for the show at phish.net: [{parsed_text[1]}](phish.in/{parsed_text[1]})
                 You can find audio for the full show at phish.in: Test
                 """
                 bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
