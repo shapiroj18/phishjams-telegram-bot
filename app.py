@@ -56,21 +56,22 @@ def respond():
         bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
         
     elif text.startswith('mp3'):
+        
         # text must be of the format "/mp3 YYYY-MM-DD song_name"
-        parsed_text = text.lower().split(', ')
+        parsed_text = text.split(', ')
         if len(parsed_text) == 3:
             response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
-            if response.startswith('http://'):
-                # caption = f'{parsed_text[1]} {parsed_text[2]}'
-                # links_text = f' \
-                # You can find info for the show at phish.net: [{parsed_text[1]}](phish.in/{parsed_text[1]}) \
-                # You can find audio for the full show at phish.in: Test \
-                # '
-                # bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
-                # bot.send_audio(chat_id=chat_id, audio=response, caption=caption)
-                pass
-            else:
-                bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
+            # if response.startswith('http://'):
+            #     # caption = f'{parsed_text[1]} {parsed_text[2]}'
+            #     # links_text = f' \
+            #     # You can find info for the show at phish.net: [{parsed_text[1]}](phish.in/{parsed_text[1]}) \
+            #     # You can find audio for the full show at phish.in: Test \
+            #     # '
+            #     # bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
+            #     # bot.send_audio(chat_id=chat_id, audio=response, caption=caption)
+            #     pass
+            # else:
+            #     bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
         else:
             response = 'The command must look like \n`mp3, song name, YYYY-MM-DD`'
             bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
