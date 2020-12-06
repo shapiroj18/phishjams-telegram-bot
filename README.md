@@ -26,3 +26,4 @@ To Do:
 5. Mypy
 6. Black
 7. Phish Trivia Game!
+8. `make dev` Makefile
