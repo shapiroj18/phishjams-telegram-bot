@@ -66,7 +66,7 @@ def respond():
                 You can find info for the show at phish.net: [{parsed_text[1]}](phish.in/{parsed_text[1]})
                 You can find audio for the full show at phish.in: Test
                 """
-                bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
+                # bot.send_message(chat_id=chat_id, text=links_text, parse_mode='Markdown', reply_to_message_id=msg_id)
                 # bot.send_audio(chat_id=chat_id, audio=response, caption=caption)
             else:
                 bot.send_message(chat_id=chat_id, text=response, parse_mode='Markdown', reply_to_message_id=msg_id)
