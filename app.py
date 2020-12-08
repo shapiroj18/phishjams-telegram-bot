@@ -113,13 +113,19 @@ def respond():
         
     elif text == "sponsor":
         
+        HELP_BUTTON_CALLBACK_DATA = 'A unique text for help button callback data'
+        help_button = telegram.InlineKeyboardButton(
+            text='Help me', # text that show to user
+            callback_data=HELP_BUTTON_CALLBACK_DATA # text that send to bot when user tap button
+        )
+                
         sponsorship_text = """ \
         If you want to support the development of this project, please consider funding it below:
-        [button url="https://github.com/sponsors/shapiroj18/button"]
         """
+        # [button url="https://github.com/sponsors/shapiroj18/button"]
         
         
-        bot.send_message(chat_id=chat_id, text=sponsorship_text, parse_mode='Markdown', reply_to_message_id=msg_id)
+        bot.send_message(chat_id=chat_id, text=sponsorship_text, reply_to_message_id=msg_id, reply_markup=telegram.InlineKeyboardMarkup([help_button]))
 
     else:
         try:
