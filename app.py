@@ -114,13 +114,9 @@ def respond():
     elif text == "sponsor":
         
         test_text = """
-            <head>
-                <title>A Funny Little Phish Bot</title>
-            </head>
             <body>
                 A funny little bot
             </body>
-        </html>
         """
         
         
