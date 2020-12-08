@@ -29,3 +29,4 @@ To Do:
 7. Phish Trivia Game!
 8. `make dev` Makefile, include setting up environment if doesn't exist, logging in to heroku if not logged in (try if/else statement) and then export creds to environment
 9. Create md file for commands
+10. Automatically send mjm when it gets posted
