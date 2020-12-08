@@ -73,7 +73,7 @@ def respond():
                 Find info for the show at [phish.net]({phishnet_api.get_show_url(parsed_text[2])})\n\
                 Find audio for the full show at [phish.in](phish.in/{parsed_text[2]})\
                 """
-                bot.send_chat_action(chat_id=chat_id, action='typing')
+                bot.send_chat_action(chat_id=chat_id, action="typing")
                 bot.send_message(
                     chat_id=chat_id,
                     text=links_text,
@@ -111,16 +111,19 @@ def respond():
 
         bot.send_message(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
         bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
-        
+
     elif text == "sponsor":
-                
+
         sponsorship_text = """ \
-        If you want to support the development of this project, please consider funding it below:
+        If you want to support the development of this project, please consider [contributing!](https://github.com/sponsors/shapiroj18)!
         """
-        # [button url="https://github.com/sponsors/shapiroj18/button"]
-        
-        
-        bot.send_message(chat_id=chat_id, text=sponsorship_text, reply_to_message_id=msg_id)
+
+        bot.send_message(
+            chat_id=chat_id,
+            text=sponsorship_text,
+            parse_mode="Markdown",
+            reply_to_message_id=msg_id,
+        )
 
     else:
         try:
