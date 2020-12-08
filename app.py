@@ -113,9 +113,9 @@ def respond():
         
     elif text == "sponsor":
         
-        sponsorship_text = f""" \
+        sponsorship_text = """ \
         If you want to support the development of this project, please consider funding it below:
-        <iframe src="https://github.com/sponsors/shapiroj18/button" title="Sponsor shapiroj18" height="35" width="116" style="border: 0;"></iframe>
+        [button url="https://github.com/sponsors/shapiroj18/button"]
         """
         
         
