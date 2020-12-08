@@ -112,7 +112,7 @@ def respond():
         bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
         
     elif text == "sponsor":
-        bot.send_message(chat_id=chat_id, text=welcome_message, reply_to_message_id=msg_id)
+        bot.send_message(chat_id=chat_id, text=render_template("sponsor.html"), parse_mode='HTML', reply_to_message_id=msg_id)
 
     else:
         try:
