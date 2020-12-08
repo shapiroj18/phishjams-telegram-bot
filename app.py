@@ -112,7 +112,21 @@ def respond():
         bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
         
     elif text == "sponsor":
-        bot.send_message(chat_id=chat_id, text=render_template("sponsor.html"), parse_mode='HTML', reply_to_message_id=msg_id)
+        
+        test_text = """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>A Funny Little Phish Bot</title>
+            </head>
+            <body>
+                A funny little bot
+            </body>
+        </html>
+        """
+        
+        
+        bot.send_message(chat_id=chat_id, text=test_text, parse_mode='HTML', reply_to_message_id=msg_id)
 
     else:
         try:
