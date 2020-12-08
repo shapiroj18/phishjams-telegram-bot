@@ -73,6 +73,7 @@ def respond():
                 Find info for the show at [phish.net]({phishnet_api.get_show_url(parsed_text[2])})\n\
                 Find audio for the full show at [phish.in](phish.in/{parsed_text[2]})\
                 """
+                bot.send_action(chat_id=chat_id, action='typing')
                 bot.send_message(
                     chat_id=chat_id,
                     text=links_text,
@@ -112,12 +113,6 @@ def respond():
         bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
         
     elif text == "sponsor":
-        
-        HELP_BUTTON_CALLBACK_DATA = 'A unique text for help button callback data'
-        help_button = telegram.InlineKeyboardButton(
-            text='Help me', # text that show to user
-            callback_data=HELP_BUTTON_CALLBACK_DATA # text that send to bot when user tap button
-        )
                 
         sponsorship_text = """ \
         If you want to support the development of this project, please consider funding it below:
@@ -125,7 +120,7 @@ def respond():
         # [button url="https://github.com/sponsors/shapiroj18/button"]
         
         
-        bot.send_message(chat_id=chat_id, text=sponsorship_text, reply_to_message_id=msg_id, reply_markup=telegram.InlineKeyboardMarkup([help_button]))
+        bot.send_message(chat_id=chat_id, text=sponsorship_text, reply_to_message_id=msg_id)
 
     else:
         try:
