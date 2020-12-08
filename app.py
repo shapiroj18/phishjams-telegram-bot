@@ -35,7 +35,7 @@ def index():
 
 @app.route("/phish")
 def phish():
-    return render_template("base.html")
+    return render_template("phish.html")
 
 
 @app.route(f"/{auth_key}", methods=["POST"])
@@ -73,7 +73,7 @@ def respond():
                 Find info for the show at [phish.net]({phishnet_api.get_show_url(parsed_text[2])})\n\
                 Find audio for the full show at [phish.in](phish.in/{parsed_text[2]})\
                 """
-                bot.send_action(chat_id=chat_id, action='typing')
+                bot.send_chat_action(chat_id=chat_id, action='typing')
                 bot.send_message(
                     chat_id=chat_id,
                     text=links_text,
