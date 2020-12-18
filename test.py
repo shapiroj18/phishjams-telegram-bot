@@ -40,6 +40,6 @@ if __name__ == "__main__":
     # Start the webhook
     updater.start_webhook(listen="0.0.0.0",
                           port=int(PORT),
-                          url_path=TOKEN)
+                          url_path=auth_key)
     updater.bot.setWebhook(f"https://{app_name}.herokuapp.com/{auth_key}")
     updater.idle()
