@@ -27,7 +27,7 @@ See commands below!
 
 # Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
 
-def test_new(update: Update, context: CallbackContext) -> None:
+def test_new(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hi!')
 
