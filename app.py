@@ -2,6 +2,8 @@ import os
 import telegram
 import re
 from time import sleep
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 from flask import Flask, request, render_template
 
@@ -25,6 +27,10 @@ See commands below!
 
 # Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
 
+def test_new(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /start is issued."""
+    update.message.reply_text('Hi!')
+
 app = Flask(__name__)
 
 
@@ -40,6 +46,11 @@ def phish():
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
+    updater = Updater(auth_key, use_context=True)
+    dispatcher = updater.dispatcher
+    
+    dispatcher.add_handler(CommandHandler("test_new", test_new))
+    
     update = telegram.Update.de_json(request.get_json(force=True), bot)
 
     chat_id = update.message.chat.id
