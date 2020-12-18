@@ -46,7 +46,7 @@ def phish():
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
-    updater = Updater(auth_key, use_context=True)
+    update = Updater(auth_key, use_context=True)
     dispatcher = updater.dispatcher
     
     dispatcher.add_handler(CommandHandler("test_new", test_new))
