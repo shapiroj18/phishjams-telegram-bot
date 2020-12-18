@@ -12,6 +12,10 @@ Still in development
 Notes:
 Environmental variables are stored as [heroku config vars](https://devcenter.heroku.com/articles/config-vars)
 
+Development:
+* You need [Python3](https://www.python.org/downloads/) and the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) installed.
+* Run `source start-dev-env.sh` to start virtual environment, log in to heroku and store local env variables. Begin local flask app with `-r` or `--run`.
+
 The environmental variables stored are:
 1. BOT_TOKEN=`bot_token` (token for `@gone_phishing_bot` from BotFather)
 2. BOT_USERNAME=`username` (username for `@gone_phishing_bot` from BotFather)
