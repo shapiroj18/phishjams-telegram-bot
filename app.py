@@ -1,167 +1,58 @@
+import logging
 import os
-import telegram
-import re
-from time import sleep
-import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-from flask import Flask, request, render_template
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
 
-url = os.environ.get("URL")
+auth_key = os.environ.get("BOT_TOKEN")
+app_name = os.environ.get("HEROKU_APP_NAME")
 
-bot = telegram.Bot(token=auth_key)
-phishnet_api = PhishNetAPI()
-phishin_api = PhishINAPI()
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
 
-welcome_message = """
-\U0001F420 Welcome to the Phish Bot!
+logger = logging.getLogger(__name__)
 
-See commands below!
-`logo`: returns the classic rainbow logo
-`mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
-"""
-
-# Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
-
-def test_new(update, context):
+# Define a few command handlers. These usually take the two arguments update and
+# context. Error handlers also receive the raised TelegramError object in error.
+def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hi!')
-
-app = Flask(__name__)
-
-
-@app.route("/")
-def index():
-    return "."
+    
+def help_command(update, context):
+    """Send a message when the command /help is issued."""
+    update.message.reply_text('Help!')
 
 
-@app.route("/phish")
-def phish():
-    return render_template("phish.html")
+def echo(update, context):
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
 
 
-@app.route(f"/{auth_key}", methods=["POST"])
-def respond():
+def main():
     updater = Updater(auth_key, use_context=True)
+    
     dispatcher = updater.dispatcher
     
-    dispatcher.add_handler(CommandHandler("test_new", test_new))
+    # on different commands - answer in Telegram
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("help", help_command))
     
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-
-    chat_id = update.message.chat.id
-    msg_id = update.message.message_id
-
-    text = update.message.text.encode("utf-8").decode().lower()
-
-    print("got message: ", text)
-
-    if text == "/start":
-        bot_welcome = welcome_message
-        bot.send_message(
-            chat_id=chat_id,
-            text=bot_welcome,
-            parse_mode="Markdown",
-            reply_to_message_id=msg_id,
-        )
-
-    elif text == "logo":
-        logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
-        bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
-
-    elif text.startswith("mp3"):
-
-        # text must be of the format "/mp3 YYYY-MM-DD song_name"
-        parsed_text = text.split(", ")
-        if len(parsed_text) == 3:
-            response = phishin_api.get_song_url(parsed_text[1], parsed_text[2])
-            if response.startswith("http"):
-                links_text = f""" \
-                Find info for the show at [phish.net]({phishnet_api.get_show_url(parsed_text[2])})\n\
-                Find audio for the full show at [phish.in](phish.in/{parsed_text[2]})\
-                """
-                bot.send_chat_action(chat_id=chat_id, action="typing")
-                bot.send_message(
-                    chat_id=chat_id,
-                    text=links_text,
-                    parse_mode="Markdown",
-                    reply_to_message_id=msg_id,
-                )
-                bot.send_audio(chat_id=chat_id, audio=response)
-            else:
-                bot.send_message(
-                    chat_id=chat_id,
-                    text=response,
-                    parse_mode="Markdown",
-                    reply_to_message_id=msg_id,
-                )
-        else:
-            response = "The command must look like \n`mp3, song name, YYYY-MM-DD`"
-            bot.send_message(
-                chat_id=chat_id,
-                text=response,
-                parse_mode="Markdown",
-                reply_to_message_id=msg_id,
-            )
-
-    elif text == "random":
-        # should be able to enter random or year or song name
-        # lookup jam chart
-        # random date in jam chart
-        # send info about show on phish.net and relisten and/or phish.in link to song
-        # for relisten: get url from inspect > network (refresh page) > year (YYYY-MM-DD) > source_id (maybe in sources['review_count']['sets']['source_id'])
-        response = phishnet_api.get_jamchart_songs()
-        relisten_url = "https://relisten.net/phish/1991/12/04/david-bowie?source=162594"
-        message = f"Your song is {response[1]}"
-        audio_url = "https://phish.in/audio/000/031/671/31671.mp3"
-        caption = "Ya Mar 1999-03-05"
-
-        bot.send_message(chat_id=chat_id, text=message, reply_to_message_id=msg_id)
-        bot.send_audio(chat_id=chat_id, audio=audio_url, caption=caption)
-
-    elif text == "sponsor":
-
-        sponsorship_text = """ \
-        If you want to support the development of this project, please consider [contributing!](https://github.com/sponsors/shapiroj18)!
-        """
-
-        bot.send_message(
-            chat_id=chat_id,
-            text=sponsorship_text,
-            parse_mode="Markdown",
-            reply_to_message_id=msg_id,
-        )
-
-    else:
-        try:
-            text = re.sub(r"/W", "_", text)
-            bot.send_message(
-                chat_id=chat_id,
-                text="Not a phishable command \U0001F420",
-                reply_to_message_id=msg_id,
-            )
-        except Exception:
-            bot.send_message(
-                chat_id=chat_id,
-                text="There was a problem in the name you used, please use a different name",
-                reply_to_message_id=msg_id,
-            )
-
-    return "ok"
-
-
-@app.route("/setwebhook", methods=["GET", "POST"])
-def set_webhook():
-    s = bot.setWebhook(f"{url}{auth_key}")
-
-    if s:
-        return "webhook setup ok"
-    else:
-        return "webhook setup failed"
+    # on noncommand i.e message - echo the message on Telegram
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+    
+    PORT = os.environ.get('PORT')
     
 
-if __name__ == "__main__":
-    app.run(threaded=True)
+    # Start the webhook
+    updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=auth_key)
+    updater.bot.setWebhook(f"https://{app_name}.herokuapp.com/{auth_key}")
+    updater.idle()
+    
+if __name__ == '__main__':
+    main()
