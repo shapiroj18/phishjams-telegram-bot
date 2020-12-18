@@ -34,3 +34,5 @@ To Do:
 8. `make dev` Makefile, include setting up environment if doesn't exist, logging in to heroku if not logged in (try if/else statement) and then export creds to environment
 9. Create md file for commands
 10. Automatically send mjm when it gets posted
+11. Get email updates
+12. CI/CD

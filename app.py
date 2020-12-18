@@ -10,7 +10,6 @@ from flask import Flask, request, render_template
 from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
 
-auth_key = os.environ.get("BOT_TOKEN")
 url = os.environ.get("URL")
 
 bot = telegram.Bot(token=auth_key)
@@ -50,7 +49,6 @@ def respond():
     dispatcher = updater.dispatcher
     
     dispatcher.add_handler(CommandHandler("test_new", test_new))
-    updater.start_polling()
     
     update = telegram.Update.de_json(request.get_json(force=True), bot)
 
@@ -163,11 +161,7 @@ def set_webhook():
         return "webhook setup ok"
     else:
         return "webhook setup failed"
-
-
-# @app.route("/<name>")
-# def hello_name(name):
-#     return f"hello {name}"
+    
 
 if __name__ == "__main__":
     app.run(threaded=True)
