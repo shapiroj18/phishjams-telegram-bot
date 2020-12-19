@@ -59,10 +59,10 @@ def random_jam(context):
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
     keyboard = [
-    [
-        InlineKeyboardButton("Button 1", callback_data='1'),
-        InlineKeyboardButton("Button 2", callback_data='2'),
-    ]]
+    [InlineKeyboardButton("Jam Link", url="phish.net"),]
+    [InlineKeyboardButton("Show Link", url="phish.net"),]
+    [InlineKeyboardButton("Show Info", url="phish.net"),]
+    ]
     
     reply_markup = InlineKeyboardMarkup(keyboard)
 
