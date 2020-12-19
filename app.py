@@ -53,6 +53,7 @@ def send_daily_jam(context):
     
 def remove_job_if_exists(name, context):
     """Remove job with given name. Returns whether job was removed."""
+    current_jobs = context.job_queue.get_jobs_by_name(name)
     if not current_jobs:
         return False
     for job in current_jobs:
@@ -65,7 +66,6 @@ def random_jam(update, context):
     try:
         # args[0] should contain the time for the timer in seconds
         due = int(context.args[0])
-        print(context)
         if due < 0:
             update.message.reply_text("Sorry, we can't go back to the future")
             return
@@ -79,7 +79,7 @@ def random_jam(update, context):
         update.message.reply_text(text)
         
     except(IndexError, ValueError):
-        update.message.reply_text('Usage: /set <seconds>')
+        update.message.reply_text('Usage: /random_jam <seconds>')
 
 def unset(update, context):
     """Remove the job if the user changed their mind"""
