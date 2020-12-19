@@ -52,9 +52,7 @@ def send_logo(update, context):
 
 
 # Send daily jam
-def random_jam(update, context):
-    """Sends daily jam"""
-    job = context.job
+def get_random_jam_keyboard():
 
     song, date = phishnet_api.get_random_jamchart()
     response = phishin_api.get_song_url(song=song, date=date)
@@ -71,6 +69,25 @@ def random_jam(update, context):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    return reply_markup
+    
+def random_jam(update, context):
+    """Sends random jam"""
+    
+    reply_markup = get_random_jam_keyboard()
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=f"*Random Jam \U0001F420*\n{song} {date}",
+        parse_mode="Markdown",
+        reply_markup=reply_markup,
+    )
+
+
+def random_jam_daily(context):
+    """Sends daily jam"""
+
+    reply_markup = get_random_jam_keyboard()
 
     context.bot.send_message(
         job.context,
@@ -94,15 +111,9 @@ def daily_jam(update, context):
     """Add a job to the queue"""
     chat_id = update.message.chat_id
     try:
-        # args[0] should contain the time for the timer in seconds
-        # due = int(context.args[0])
-        # if due < 0:
-        #     update.message.reply_text("Sorry, we can't go back to the future")
-        #     return
-
         job_removed = remove_job_if_exists(str(chat_id), context)
         context.job_queue.run_repeating(
-            random_jam,
+            random_jam_daily,
             first=datetime.datetime.now(),
             interval=datetime.timedelta(seconds=10),
             context=chat_id,
@@ -110,8 +121,6 @@ def daily_jam(update, context):
         )
 
         text = "Daily random jams successfully started! To unset use /unset_daily_jam."
-        if job_removed:
-            text += " Old one was removed"
         update.message.reply_text(text)
 
     except (IndexError, ValueError):
