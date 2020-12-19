@@ -53,18 +53,22 @@ def send_logo(update, context):
 def random_jam(context):
     """Sends daily jam"""
     job = context.job
-    
-    song= "Sand"
+
+    song = "Sand"
     date = "1999-12-13"
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
-    context.bot.send_message(job.context, reply_markup=InlineKeyboardMarkup(
-        [
-            [[InlineKeyboardButton(text='Random Jam', url='phish.in')],
-            [[InlineKeyboardButton(text='Full Show', url='phish.in')], 
-            [InlineKeyboardButton(text='Show Info', url='phish.net')],
-        ]
-    ))
+    context.bot.send_message(
+        job.context,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Random Jam", url="phish.in")],
+                [InlineKeyboardButton(text="Full Show", url="phish.in")],
+                [InlineKeyboardButton(text="Show Info", url="phish.net")],
+            ]
+        ),
+    )
+
 
 def remove_job_if_exists(name, context):
     """Remove job with given name. Returns whether job was removed."""
@@ -89,7 +93,7 @@ def daily_jam(update, context):
         job_removed = remove_job_if_exists(str(chat_id), context)
         context.job_queue.run_repeating(
             random_jam,
-            first=datetime.datetime.now(), #+ datetime.timedelta(days=1),
+            first=datetime.datetime.now(),  # + datetime.timedelta(days=1),
             interval=datetime.timedelta(seconds=5),
             context=chat_id,
             name=str(chat_id),
