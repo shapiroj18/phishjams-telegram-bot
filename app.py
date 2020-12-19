@@ -30,14 +30,14 @@ PORT = int(os.environ.get("PORT", "8443"))
 def start(update, context):
     """Send a message when the command /start is issued."""
     welcome_message = """
-    \U0001F420 Welcome to the Phish Bot!
+    Welcome to the Phish Bot!
 
     See commands and functionality below:
-    `/start`: shows this fun menu you see in front of you
-    `/logo`: returns the classic rainbow logo
-    '/randomjam': sends random jam now
-    `/dailyjam`: sends you a daily random jam from phish.net's jamcharts
-    '/unset': undoes daily random jam sends
+    `/start` shows this fun menu you see in front of you
+    `/logo` returns the classic rainbow logo
+    `/randomjam` sends random jam from phish.net's jamcharts
+    `/dailyjam` schedules daily random jam sends
+    `/unset` undoes daily random jam sends
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
@@ -52,13 +52,12 @@ def send_logo(update, context):
 
 
 # Send daily jam
-def random_jam(context):
+def random_jam(update, context):
     """Sends daily jam"""
     job = context.job
 
     song, date = phishnet_api.get_random_jamchart()
     response = phishin_api.get_song_url(song=song, date=date)
-    links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
     keyboard = [
         [
             InlineKeyboardButton("Jam Link", url=response),
@@ -75,7 +74,7 @@ def random_jam(context):
 
     context.bot.send_message(
         job.context,
-        text=f"~*Daily Phish Squeeze*~\n{song} {date}",
+        text=f"*Daily Squeeze \U0001F420*\n{song} {date}",
         parse_mode="Markdown",
         reply_markup=reply_markup,
     )
