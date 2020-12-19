@@ -53,13 +53,14 @@ def send_logo(update, context):
 def random_jam(context):
     """Sends daily jam"""
     job = context.job
-    song= "Sand"
-    date = "1999-12-13"
-    response = phishin_api.get_song_url(song=song, date=date)
-    if response.startswith("http"):
-                links_text = f"""[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
-    context.bot.send_audio(job.context, audio=response)       
-    context.bot.send_message(job.context, text=links_text, parse_mode = "Markdown")
+    context.bot.send_audio(job.context, audio='https://phish.in/audio/000/020/111/20111.mp3')  
+    # song= "Sand"
+    # date = "1999-12-13"
+    # response = phishin_api.get_song_url(song=song, date=date)
+    # if response.startswith("http"):
+    #     links_text = f"""[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
+    #     context.bot.send_audio(job.context, audio=response)       
+    #     context.bot.send_message(job.context, text=links_text, parse_mode = "Markdown")
 
 
 def remove_job_if_exists(name, context):
