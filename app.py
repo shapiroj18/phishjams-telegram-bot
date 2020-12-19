@@ -17,6 +17,7 @@ from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
 
 url = os.environ.get("URL")
+auth_key = os.environ.get("BOT_TOKEN")
 
 bot = telegram.Bot(token=auth_key)
 phishnet_api = PhishNetAPI()
