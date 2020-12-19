@@ -54,14 +54,13 @@ def random_jam(context):
     """Sends daily jam"""
     job = context.job
 
-    song = "Sand"
-    date = "1999-12-13"
+    song, date = phishnet_api.get_random_jamchart()
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
     keyboard = [
     [InlineKeyboardButton("Jam Link", url=response),],
-    [InlineKeyboardButton("Show Link", url=phishnet_api.get_show_url(date)),],
-    [InlineKeyboardButton("Show Info", url=f"phish.in/{date}"),],
+    [InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),],
+    [InlineKeyboardButton("Show Info", url=phishnet_api.get_show_url(date)),],
     ]
     
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -69,7 +68,7 @@ def random_jam(context):
     
     context.bot.send_message(
         job.context,
-        text="Your Daily Phish Jam",
+        text=f"The Daily Phish Squeeze: {song} {date}",
         reply_markup=reply_markup
     )
 
