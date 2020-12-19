@@ -27,7 +27,7 @@ def start(update, context):
     `logo`: returns the classic rainbow logo
     `mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
     """
-    context.bot.send_message(chat_id=update.effective_chat.id, text=welcome_message)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=welcome_message, parse_mode="MarkdownV2")
     
 def help_command(update, context):
     """Send a message when the command /help is issued."""
