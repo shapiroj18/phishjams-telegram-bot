@@ -33,11 +33,11 @@ def start(update, context):
     Welcome to the Phish Bot!
 
     See commands and functionality below:
-    `/start` shows this fun menu you see in front of you
-    `/logo` returns the classic rainbow logo
-    `/randomjam` sends random jam from phish.net's jamcharts
-    `/dailyjam` schedules daily random jam sends
-    `/unset` undoes daily random jam sends
+    `/start` Shows full menu of commands
+    `/randomjam` Sends random jam from phish.net's jamcharts
+    `/dailyjam` Schedules daily random jam sends
+    `/unset` Undoes daily random jam sends
+    `/logo` Sends photo of the classic logo
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
@@ -139,6 +139,10 @@ def unset_daily_jam(update, context):
         else "You have no active daily random jams"
     )
     update.message.reply_text(text)
+    
+def unknown(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Command not recognized. Write /start for possible commands.")
+
 
 
 def error(update, context):
@@ -157,6 +161,9 @@ def main():
     dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
     dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
+    
+    # non-understood commands
+    dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
     # error handler
     dispatcher.add_error_handler(error)
