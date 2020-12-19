@@ -69,7 +69,7 @@ def random_jam(context):
     
     context.bot.send_message(
         job.context,
-        reply_markup=replpy_markup
+        reply_markup=reply_markup
     )
 
 
