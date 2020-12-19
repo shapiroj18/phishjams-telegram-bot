@@ -53,7 +53,7 @@ def send_logo(update, context):
 def random_jam(context):
     """Sends daily jam"""
     job = context.job
-    context.bot.send_audio(job.context, audio='https://phish.in/audio/000/020/111/20111.mp3')  
+    context.bot.send_audio(job.context, audio='http://phish.in/audio/000/020/111/20111.mp3')  
     # song= "Sand"
     # date = "1999-12-13"
     # response = phishin_api.get_song_url(song=song, date=date)
