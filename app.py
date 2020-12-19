@@ -62,7 +62,12 @@ def get_random_jam_keyboard():
             ),
         ],
         [
-            InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),
+            InlineKeyboardButton("Show Link (Desktop)", url=f"https://phish.in/{date}"),
+        ],
+        [
+            InlineKeyboardButton(
+                "Show Link (Mobile)", url="https://relisten.net/phish/2003/12/28"
+            ),
         ],
         [
             InlineKeyboardButton("Show Info", url=phishnet_api.get_show_url(date)),
@@ -117,7 +122,7 @@ def daily_jam(update, context):
         context.job_queue.run_repeating(
             random_jam_daily,
             first=datetime.datetime.now(),
-            interval=datetime.timedelta(seconds=10),
+            interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
         )
@@ -139,10 +144,13 @@ def unset_daily_jam(update, context):
         else "You have no active daily random jams"
     )
     update.message.reply_text(text)
-    
-def unknown(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Command not recognized. Write /start for possible commands.")
 
+
+def unknown(update, context):
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Command not recognized. Write /start for possible commands.",
+    )
 
 
 def error(update, context):
@@ -161,7 +169,7 @@ def main():
     dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
     dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
-    
+
     # non-understood commands
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
