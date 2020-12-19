@@ -71,7 +71,7 @@ def random_jam(update, context):
         #     return
         
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(send_daily_jam, first = datetime.timedelta(seconds=5), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
+        context.job_queue.run_repeating(send_daily_jam, first = datetime.datetime.now() + datetime.time_delta(seconds = 10), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
         
         text = "Jam successfully sent"
         if job_removed:
