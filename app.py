@@ -30,12 +30,9 @@ See commands below!
 `mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
 """
 
-# Generously created based on https://www.toptal.com/python/telegram-bot-tutorial-python
-
-
-def test_new(update, context):
+def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text("Hi!")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
 
 app = Flask(__name__)
@@ -53,10 +50,16 @@ def phish():
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
+    
+    # initialize bot
     bot = telegram.Bot(token=auth_key)
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     dispatcher = Dispatcher(bot, None)
-    dispatcher.add_handler(CommandHandler("test_new", test_new))
+    
+    # handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    
+    # process an update
     dispatcher.process_update(update)
 
 
@@ -67,7 +70,7 @@ def respond():
 
     print("got message: ", text)
 
-    if text == "/start":
+    if text == "/startasdf":
         bot_welcome = welcome_message
         bot.send_message(
             chat_id=chat_id,
