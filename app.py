@@ -58,19 +58,24 @@ def random_jam(context):
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
     keyboard = [
-    [InlineKeyboardButton("Jam Link", url=response),],
-    [InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),],
-    [InlineKeyboardButton("Show Info", url=phishnet_api.get_show_url(date)),],
+        [
+            InlineKeyboardButton("Jam Link", url=response),
+        ],
+        [
+            InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),
+        ],
+        [
+            InlineKeyboardButton("Show Info", url=phishnet_api.get_show_url(date)),
+        ],
     ]
-    
+
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    
     context.bot.send_message(
         job.context,
         text=f"### ~~*Daily Phish Squeeze*~\~\n{song} {date}",
         parse_mode="Markdown",
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
     )
 
 
@@ -97,15 +102,14 @@ def daily_jam(update, context):
         job_removed = remove_job_if_exists(str(chat_id), context)
         context.job_queue.run_repeating(
             random_jam,
-            first=datetime.datetime.now(),  # + datetime.timedelta(days=1),
+            first=datetime.datetime.now()
+            + timedelta(seconds=10),  # + datetime.timedelta(days=1),
             interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
         )
 
-        text = (
-            'Daily random jams successfully started! To unset use "/unset_daily_jam".'
-        )
+        text = "Daily random jams successfully started! To unset use /unset_daily_jam."
         if job_removed:
             text += " Old one was removed"
         update.message.reply_text(text)
