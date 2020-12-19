@@ -102,9 +102,8 @@ def daily_jam(update, context):
         job_removed = remove_job_if_exists(str(chat_id), context)
         context.job_queue.run_repeating(
             random_jam,
-            first=datetime.datetime.now()
-            + datetime.timedelta(seconds=10),  # + datetime.timedelta(days=1),
-            interval=datetime.timedelta(days=1),
+            first=datetime.datetime.now(),
+            interval=datetime.timedelta(seconds=10),
             context=chat_id,
             name=str(chat_id),
         )
