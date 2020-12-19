@@ -74,7 +74,7 @@ def remove_job_if_exists(name, context):
     return True
 
 
-def send_daily_jam(update, context):
+def daily_jam(update, context):
     """Add a job to the queue"""
     chat_id = update.message.chat_id
     try:
