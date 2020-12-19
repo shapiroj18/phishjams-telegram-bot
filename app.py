@@ -50,7 +50,7 @@ def send_logo(update, context):
 
 
 # Send daily jam
-def send_daily_jam(context):
+def random_jam(context):
     """Sends daily jam"""
     job = context.job
     response = phishin_api.get_song_url(song="Sand", date="1999-12-13")
@@ -74,7 +74,7 @@ def remove_job_if_exists(name, context):
     return True
 
 
-def daily_jam(update, context):
+def send_daily_jam(update, context):
     """Add a job to the queue"""
     chat_id = update.message.chat_id
     try:
@@ -86,7 +86,7 @@ def daily_jam(update, context):
 
         job_removed = remove_job_if_exists(str(chat_id), context)
         context.job_queue.run_repeating(
-            send_daily_jam,
+            random_jam,
             first=datetime.datetime.now(), #+ datetime.timedelta(days=1),
             interval=datetime.timedelta(seconds=1),
             context=chat_id,
