@@ -13,18 +13,18 @@ from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
 
 auth_key = os.environ.get("BOT_TOKEN")
-heroku_app_url = os.environ.get('HEROKU_APP_URL')
+heroku_app_url = os.environ.get("HEROKU_APP_URL")
 
 phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
 
 # Enable Logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-PORT = int(os.environ.get('PORT', '8443'))
+PORT = int(os.environ.get("PORT", "8443"))
 
 # Start message
 def start(update, context):
@@ -37,20 +37,32 @@ def start(update, context):
     `/logo`: returns the classic rainbow logo
     `mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
     """
-    context.bot.send_message(chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown")
-    
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
+    )
+
+
 # Send logo
 def send_logo(update, context):
     """Send ye old phish logo"""
     logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
     context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
-    
+
+
 # Send daily jam
 def send_daily_jam(context):
     """Sends daily jam"""
     job = context.job
-    context.bot.send_message(job.context, text = "Jam")
-    
+    response = phishin_api.get_song_url(song="Sand", date="1999-12-13")
+    if response.startswith("http"):
+                links_text = f""" \
+                Find info for the show at [phish.net]({phishnet_api.get_show_url(date)})\n\
+                Find audio for the full show at [phish.in](phish.in/{date})\
+                """
+    context.bot.send_message(job.context, text=links_text)
+    context.bot.send_audio(jobs.context, audio=response)
+
+
 def remove_job_if_exists(name, context):
     """Remove job with given name. Returns whether job was removed."""
     current_jobs = context.job_queue.get_jobs_by_name(name)
@@ -60,7 +72,8 @@ def remove_job_if_exists(name, context):
         job.schedule_removal()
     return True
 
-def random_jam(update, context):
+
+def daily_random_jam(update, context):
     """Add a job to the queue"""
     chat_id = update.message.chat_id
     try:
@@ -69,51 +82,65 @@ def random_jam(update, context):
         # if due < 0:
         #     update.message.reply_text("Sorry, we can't go back to the future")
         #     return
-        
+
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(send_daily_jam, first = datetime.datetime.now() + datetime.timedelta(seconds=5), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
-        
-        text = 'Daily random jams successfully started! To unset use "/unset_daily_jam".'
+        context.job_queue.run_repeating(
+            send_daily_jam,
+            first=datetime.datetime.now() + #datetime.timedelta(days=1),
+            interval=datetime.timedelta(seconds=1),
+            context=chat_id,
+            name=str(chat_id),
+        )
+
+        text = (
+            'Daily random jams successfully started! To unset use "/unset_daily_jam".'
+        )
         if job_removed:
             text += " Old one was removed"
         update.message.reply_text(text)
-        
-    except(IndexError, ValueError):
-        update.message.reply_text('Usage: /random_jam')
+
+    except (IndexError, ValueError):
+        update.message.reply_text("Usage: /daily_random_jam")
+
 
 def unset_daily_jam(update, context):
     """Remove the job if the user changed their mind"""
     chat_id = update.message.chat_id
     job_removed = remove_job_if_exists(str(chat_id), context)
-    text = "Daily jams successfully cancelled" if job_removed else "You have no active daily random jams"
+    text = (
+        "Daily jams successfully cancelled"
+        if job_removed
+        else "You have no active daily random jams"
+    )
     update.message.reply_text(text)
-    
+
+
 def error(update, context):
     """Log errors caused by updates"""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
-    
-     
+
+
 def main():
     # initialize bot
     updater = Updater(auth_key, use_context=True)
     dispatcher = updater.dispatcher
-    
+
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
-    dispatcher.add_handler(CommandHandler("random_jam", random_jam))
+    dispatcher.add_handler(CommandHandler("daily_random_jam", daily_random_jam))
     dispatcher.add_handler(CommandHandler("unset_daily_jam", unset_daily_jam))
-    
+
     # error handler
     dispatcher.add_error_handler(error)
-    
+
     # Start bot
-    updater.start_webhook(listen = "0.0.0.0", port=PORT, url_path=auth_key)
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=auth_key)
     updater.bot.set_webhook(heroku_app_url + auth_key)
-    
-    
-if __name__ == '__main__':
-    main()    
+
+
+if __name__ == "__main__":
+    main()
 
 
 # app = Flask(__name__)
@@ -131,27 +158,6 @@ if __name__ == '__main__':
 
 # @app.route(f"/{auth_key}", methods=["POST"])
 # def respond():
-    
-#     # initialize bot
-#     bot = telegram.Bot(token=auth_key)
-#     update = telegram.Update.de_json(request.get_json(force=True), bot)
-#     dispatcher = Dispatcher(bot, None)
-    
-#     # handlers
-#     dispatcher.add_handler(CommandHandler("start", start))
-#     dispatcher.add_handler(CommandHandler("logo", send_logo))
-#     dispatcher.add_handler(CommandHandler("random_jam", random_jam))
-#     dispatcher.add_handler(CommandHandler("unset", unset))
-    
-#     # process an update
-#     dispatcher.process_update(update)
-    
-    
-    
-    
-    
-    
-
 
 #     chat_id = update.message.chat.id
 #     msg_id = update.message.message_id
@@ -160,20 +166,7 @@ if __name__ == '__main__':
 
 #     print("got message: ", text)
 
-#     if text == "/startasdf":
-#         bot_welcome = welcome_message
-#         bot.send_message(
-#             chat_id=chat_id,
-#             text=bot_welcome,
-#             parse_mode="Markdown",
-#             reply_to_message_id=msg_id,
-#         )
-
-#     elif text == "logasdfasdo":
-#         logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
-#         bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
-
-#     elif text.startswith("mp3"):
+#     if text.startswith("mp3"):
 
 #         # text must be of the format "/mp3 YYYY-MM-DD song_name"
 #         parsed_text = text.split(", ")
