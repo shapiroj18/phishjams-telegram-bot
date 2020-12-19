@@ -53,9 +53,8 @@ def phish():
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
-
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
     bot = telegram.Bot(token=auth_key)
+    update = telegram.Update.de_json(request.get_json(force=True), bot)
     dispatcher = Dispatcher(bot, None)
     dispatcher.add_handler(CommandHandler("test_new", test_new))
     dispatcher.process_update(update)
