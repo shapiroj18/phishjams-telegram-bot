@@ -35,7 +35,9 @@ def start(update, context):
     See commands and functionality below:
     `/start`: shows this fun menu you see in front of you
     `/logo`: returns the classic rainbow logo
-    `/daily_jam`: sends you a daily random jam from phish.net's jamcharts 
+    '/randomjam': sends random jam now
+    `/dailyjam`: sends you a daily random jam from phish.net's jamcharts
+    '/unset': undoes daily random jam sends
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
@@ -142,8 +144,9 @@ def main():
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
-    dispatcher.add_handler(CommandHandler("daily_jam", daily_jam))
-    dispatcher.add_handler(CommandHandler("unset_daily_jam", unset_daily_jam))
+    dispatcher.add_handler(CommandHandler("randomjam", random_jam))
+    dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
+    dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
 
     # error handler
     dispatcher.add_error_handler(error)
