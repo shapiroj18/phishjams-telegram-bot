@@ -22,22 +22,69 @@ auth_key = os.environ.get("BOT_TOKEN")
 phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
 
-welcome_message = """
-\U0001F420 Welcome to the Phish Bot!
-
-See commands below!
-`logo`: returns the classic rainbow logo
-`mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
-"""
-
+# Start message
 def start(update, context):
     """Send a message when the command /start is issued."""
+    welcome_message = """
+    \U0001F420 Welcome to the Phish Bot!
+
+    See commands and functionality below:
+    `/start`: shows this fun menu you see in front of you
+    `/logo`: returns the classic rainbow logo
+    `mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
+    """
     context.bot.send_message(chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown")
     
+# Send logo
 def send_logo(update, context):
     """Send ye old phish logo"""
     logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
     context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
+    
+# Send daily jam
+def send_daily_jam(context):
+    """Sends daily jam"""
+    job = context.job
+    context.bot.send_message(job.context, text = "Jam")
+    
+def remove_job_if_exists(name, context):
+    """Remove job with given name. Returns whether job was removed."""
+    if not current_jobs:
+        return False
+    for job in current_jobs:
+        job.schedule_removal()
+    return True
+
+def random_jam(update, context):
+    """Add a job to the queue"""
+    chat_id = update.message.chat_id
+    try:
+        # args[0] should contain the time for the timer in seconds
+        due = int(context.args[0])
+        print(context)
+        if due < 0:
+            update.message.reply_text("Sorry, we can't go back to the future")
+            return
+        
+        job_removed = remove_job_if_exists(str(chat_id), context)
+        context.job_queue.run_once(send_daily_jam, due, context=chat_id, name=str(chat_id))
+        
+        text = "Jam successfully sent"
+        if job_removed:
+            text += " Old one was removed"
+        update.message.reply_text(text)
+        
+    except(IndexError, ValueError):
+        update.message.reply_text('Usage: /set <seconds>')
+
+def unset(update, context):
+    """Remove the job if the user changed their mind"""
+    chat_id = update.message.chat_id
+    job_removed = remove_job_if_exists(str(chat_id), context)
+    text = "Jam successfully cancelled" if job_removed else "You have no active Jam"
+    update.message.reply_text(text)
+    
+            
 
 
 app = Flask(__name__)
@@ -64,9 +111,17 @@ def respond():
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
+    dispatcher.add_handler(CommandHandler("random_jam", random_jam))
+    dispatcher.add_handler(CommandHandler("unset", unset))
     
     # process an update
     dispatcher.process_update(update)
+    
+    
+    
+    
+    
+    
 
 
     chat_id = update.message.chat.id
