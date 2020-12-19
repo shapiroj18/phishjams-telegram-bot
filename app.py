@@ -35,7 +35,7 @@ def start(update, context):
     See commands and functionality below:
     `/start`: shows this fun menu you see in front of you
     `/logo`: returns the classic rainbow logo
-    `mp3, song, YYYY-MM-DD`: returns the audio of a track on a specific date 
+    `/daily_jam`: sends you a daily random jam from phish.net's jamcharts 
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
@@ -53,13 +53,15 @@ def send_logo(update, context):
 def random_jam(context):
     """Sends daily jam"""
     job = context.job
-    response = phishin_api.get_song_url(song="Sand", date="1999-12-13")
-    print(response)
+    song= "Sand"
+    date = "1999-12-13"
+    response = phishin_api.get_song_url(song=song, date=date)
     if response.startswith("http"):
                 links_text = f""" \
                 Find info for the show at [phish.net]({phishnet_api.get_show_url(date)})\n\
                 Find audio for the full show at [phish.in](phish.in/{date})\
                 """
+                
     context.bot.send_message(job.context, text=links_text)
     context.bot.send_audio(jobs.context, audio=response)
 
@@ -88,7 +90,7 @@ def daily_jam(update, context):
         context.job_queue.run_repeating(
             random_jam,
             first=datetime.datetime.now(), #+ datetime.timedelta(days=1),
-            interval=datetime.timedelta(seconds=1),
+            interval=datetime.timedelta(seconds=5),
             context=chat_id,
             name=str(chat_id),
         )
