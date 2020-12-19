@@ -68,7 +68,8 @@ def random_jam(context):
     
     context.bot.send_message(
         job.context,
-        text=f"The Daily Phish Squeeze: {song} {date}",
+        text=f"### ~~*Daily Phish Squeeze*~\~\n{song} {date}",
+        parse_mode="Markdown",
         reply_markup=reply_markup
     )
 
@@ -97,7 +98,7 @@ def daily_jam(update, context):
         context.job_queue.run_repeating(
             random_jam,
             first=datetime.datetime.now(),  # + datetime.timedelta(days=1),
-            interval=datetime.timedelta(seconds=5),
+            interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
         )
