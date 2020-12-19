@@ -31,15 +31,16 @@ def start(update, context):
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
     )
 
-
+# to do
 def help_command(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text("Help!")
 
 
-def echo(update, context):
-    """Echo the user message."""
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+def send_logo(update, context):
+    """Send ye old phish logo"""
+    logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
+    context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
 
 
 def unknown(update, context):
