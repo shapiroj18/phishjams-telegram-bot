@@ -69,6 +69,7 @@ def random_jam(context):
     
     context.bot.send_message(
         job.context,
+        text="Your Daily Phish Jam",
         reply_markup=reply_markup
     )
 
