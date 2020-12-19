@@ -31,6 +31,7 @@ def start(update, context):
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
     )
 
+
 # to do
 def help_command(update, context):
     """Send a message when the command /help is issued."""
@@ -59,7 +60,6 @@ def main():
     # Start the webhook
     updater.start_webhook(listen="0.0.0.0", port=int(PORT), url_path=auth_key)
     updater.bot.setWebhook(f"https://{app_name}.herokuapp.com/{auth_key}")
-    updater.idle()
 
 
 if __name__ == "__main__":
