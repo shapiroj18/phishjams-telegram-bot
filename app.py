@@ -57,7 +57,9 @@ def get_random_jam_keyboard():
     song, date = phishnet_api.get_random_jamchart()
     keyboard = [
         [
-            InlineKeyboardButton("Jam Link", url=phishin_api.get_song_url(song=song, date=date)),
+            InlineKeyboardButton(
+                "Jam Link", url=phishin_api.get_song_url(song=song, date=date)
+            ),
         ],
         [
             InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),
@@ -68,12 +70,13 @@ def get_random_jam_keyboard():
     ]
 
     reply_markup = song, date, InlineKeyboardMarkup(keyboard)
-    
+
     return reply_markup
-    
+
+
 def random_jam(update, context):
     """Sends random jam"""
-    
+
     song, date, reply_markup = get_random_jam_keyboard()
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -87,8 +90,7 @@ def random_jam_daily(context):
     """Sends daily jam"""
     job = context.job
 
-    reply_markup = get_random_jam_keyboard()
-
+    song, date, reply_markup = get_random_jam_keyboard()
     context.bot.send_message(
         job.context,
         text=f"*Daily Squeeze \U0001F420*\n{song} {date}",
