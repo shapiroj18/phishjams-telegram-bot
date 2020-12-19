@@ -71,9 +71,9 @@ def random_jam(update, context):
         #     return
         
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(send_daily_jam, first = datetime.datetime.now() + datetime.time_delta(seconds = 10), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
+        context.job_queue.run_repeating(send_daily_jam, first = datetime.datetime.now() + datetime.timedelta(seconds=5), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
         
-        text = "Jam successfully sent"
+        text = 'Daily random jams successfully started! To unset use "/unset_daily_jam".'
         if job_removed:
             text += " Old one was removed"
         update.message.reply_text(text)
@@ -81,11 +81,11 @@ def random_jam(update, context):
     except(IndexError, ValueError):
         update.message.reply_text('Usage: /random_jam')
 
-def unset(update, context):
+def unset_daily_jam(update, context):
     """Remove the job if the user changed their mind"""
     chat_id = update.message.chat_id
     job_removed = remove_job_if_exists(str(chat_id), context)
-    text = "Jam successfully cancelled" if job_removed else "You have no active Jam"
+    text = "Daily jams successfully cancelled" if job_removed else "You have no active daily random jams"
     update.message.reply_text(text)
     
 def error(update, context):
@@ -102,7 +102,7 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
     dispatcher.add_handler(CommandHandler("random_jam", random_jam))
-    dispatcher.add_handler(CommandHandler("unset", unset))
+    dispatcher.add_handler(CommandHandler("unset_daily_jam", unset_daily_jam))
     
     # error handler
     dispatcher.add_error_handler(error)

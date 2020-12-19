@@ -36,3 +36,4 @@ To Do:
 10. Automatically send mjm when it gets posted
 11. Get email updates
 12. CI/CD
+13. See if pushing new build removes all previous jobs
