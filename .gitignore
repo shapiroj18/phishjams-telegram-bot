@@ -3,6 +3,7 @@ instance/
 .DS_Store
 bin
 */pyvenv.cfg
+.vscode/
 
 # .gitignore template below from - https://github.com/github/gitignore/blob/master/Python.gitignore
 

@@ -1,6 +1,6 @@
 import os
 import logging
-from datetime
+from datetime import datetime
 import telegram
 from telegram.ext import (
     Updater,
@@ -71,7 +71,7 @@ def random_jam(update, context):
             return
         
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(send_daily_jam, first = datetime.datetime.now() + 10, interval = 2, context=chat_id, name=str(chat_id))
+        context.job_queue.run_repeating(send_daily_jam, first = datetime.now() + 10, interval = 2, context=chat_id, name=str(chat_id))
         
         text = "Jam successfully sent"
         if job_removed:
