@@ -4,7 +4,7 @@ import re
 from time import sleep
 import telegram
 from telegram.ext import (
-    Updater,
+    Dispatcher,
     CommandHandler,
     MessageHandler,
     Filters,
@@ -19,7 +19,6 @@ from phish_bot.phishin_api import PhishINAPI
 url = os.environ.get("URL")
 auth_key = os.environ.get("BOT_TOKEN")
 
-bot = telegram.Bot(token=auth_key)
 phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
 
@@ -54,15 +53,12 @@ def phish():
 
 @app.route(f"/{auth_key}", methods=["POST"])
 def respond():
-    # updater = Updater(auth_key, use_context=True)
-    # dispatcher = updater.dispatcher
-
-    # dispatcher.add_handler(CommandHandler("test_new", test_new))
-
 
     update = telegram.Update.de_json(request.get_json(force=True), bot)
-    dispatcher = update.dispatcher
+    bot = telegram.Bot(token=auth_key)
+    dispatcher = Dispatcher(bot, None)
     dispatcher.add_handler(CommandHandler("test_new", test_new))
+    dispatcher.process_update(update)
 
 
     chat_id = update.message.chat.id
