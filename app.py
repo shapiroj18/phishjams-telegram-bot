@@ -85,6 +85,7 @@ def random_jam(update, context):
 
 def random_jam_daily(context):
     """Sends daily jam"""
+    job = context.job
 
     reply_markup = get_random_jam_keyboard()
 
