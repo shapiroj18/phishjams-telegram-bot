@@ -13,7 +13,7 @@ from phish_bot.phishnet_api import PhishNetAPI
 from phish_bot.phishin_api import PhishINAPI
 
 auth_key = os.environ.get("BOT_TOKEN")
-heroku_app_name = os.environ.get('HEROKU_APP_NAME')
+heroku_app_url = os.environ.get('HEROKU_APP_URL')
 
 phishnet_api = PhishNetAPI()
 phishin_api = PhishINAPI()
@@ -109,7 +109,7 @@ def main():
     
     # Start bot
     updater.start_webhook(listen = "0.0.0.0", port=PORT, url_path=auth_key)
-    updater.set_webhook(heroku_app_name + auth_key)
+    updater.bot.set_webhook(heroku_app_url + auth_key)
     
     
 if __name__ == '__main__':
