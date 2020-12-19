@@ -32,7 +32,12 @@ See commands below!
 
 def start(update, context):
     """Send a message when the command /start is issued."""
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    context.bot.send_message(chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown")
+    
+def send_logo(update, context):
+    """Send ye old phish logo"""
+    logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
+    context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
 
 
 app = Flask(__name__)
@@ -58,30 +63,31 @@ def respond():
     
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("logo", send_logo))
     
     # process an update
     dispatcher.process_update(update)
 
 
-    chat_id = update.message.chat.id
-    msg_id = update.message.message_id
+    # chat_id = update.message.chat.id
+    # msg_id = update.message.message_id
 
-    text = update.message.text.encode("utf-8").decode().lower()
+    # text = update.message.text.encode("utf-8").decode().lower()
 
-    print("got message: ", text)
+    # print("got message: ", text)
 
-    if text == "/startasdf":
-        bot_welcome = welcome_message
-        bot.send_message(
-            chat_id=chat_id,
-            text=bot_welcome,
-            parse_mode="Markdown",
-            reply_to_message_id=msg_id,
-        )
+    # if text == "/startasdf":
+    #     bot_welcome = welcome_message
+    #     bot.send_message(
+    #         chat_id=chat_id,
+    #         text=bot_welcome,
+    #         parse_mode="Markdown",
+    #         reply_to_message_id=msg_id,
+    #     )
 
-    elif text == "logo":
-        logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
-        bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
+    # elif text == "logo":
+    #     logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
+    #     bot.send_photo(chat_id=chat_id, photo=logo_url, reply_to_message_id=msg_id)
 
     elif text.startswith("mp3"):
 
