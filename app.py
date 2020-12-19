@@ -1,6 +1,6 @@
 import os
 import logging
-from datetime import datetime
+import datetime
 import telegram
 from telegram.ext import (
     Updater,
@@ -65,13 +65,13 @@ def random_jam(update, context):
     chat_id = update.message.chat_id
     try:
         # args[0] should contain the time for the timer in seconds
-        due = int(context.args[0])
-        if due < 0:
-            update.message.reply_text("Sorry, we can't go back to the future")
-            return
+        # due = int(context.args[0])
+        # if due < 0:
+        #     update.message.reply_text("Sorry, we can't go back to the future")
+        #     return
         
         job_removed = remove_job_if_exists(str(chat_id), context)
-        context.job_queue.run_repeating(send_daily_jam, first = datetime.now() + 10, interval = 2, context=chat_id, name=str(chat_id))
+        context.job_queue.run_repeating(send_daily_jam, first = datetime.timedelta(seconds=5), interval = datetime.timedelta(seconds=1), context=chat_id, name=str(chat_id))
         
         text = "Jam successfully sent"
         if job_removed:
@@ -79,7 +79,7 @@ def random_jam(update, context):
         update.message.reply_text(text)
         
     except(IndexError, ValueError):
-        update.message.reply_text('Usage: /random_jam <seconds>')
+        update.message.reply_text('Usage: /random_jam')
 
 def unset(update, context):
     """Remove the job if the user changed their mind"""
