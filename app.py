@@ -1,7 +1,7 @@
 import os
 import logging
 import datetime
-import telegram
+from telegram import InlineKeyboardMarkup
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -58,8 +58,13 @@ def random_jam(context):
     date = "1999-12-13"
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
-    context.bot.send_dice(job.context, emoji=“🎲”)
-    # context.bot.send_message(job.context, text=links_text, parse_mode = "Markdown")
+    context.bot.send_message(job.context, reply_markup=InlineKeyboardMarkup(
+        [
+            [[InlineKeyboardButton(text='Random Jam', url='phish.in')],
+            [[InlineKeyboardButton(text='Full Show', url='phish.in')], 
+            [InlineKeyboardButton(text='Show Info', url='phish.net')],
+        ]
+    ))
 
 def remove_job_if_exists(name, context):
     """Remove job with given name. Returns whether job was removed."""
