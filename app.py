@@ -58,11 +58,10 @@ def main():
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(MessageHandler(Filters.command, unknown))
+    dispatcher.add_handler(CommandHandler("logo", send_logo))
+    dispatcher.add_handler(CommandHandler(Filters.command, unknown))
 
-    # on noncommand i.e message - echo the message on Telegram
-    dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), echo))
-
+    # get port
     PORT = os.environ.get("PORT")
 
     # Start the webhook
