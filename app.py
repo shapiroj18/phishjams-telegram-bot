@@ -43,13 +43,6 @@ def send_logo(update, context):
     context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
 
 
-def unknown(update, context):
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text='Not a very phishy command \U0001F420. Type "/help" if you need some ideas.',
-    )
-
-
 def main():
     updater = Updater(auth_key, use_context=True)
 
@@ -59,7 +52,6 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
-    dispatcher.add_handler(CommandHandler(Filters.command, unknown))
 
     # get port
     PORT = os.environ.get("PORT")
