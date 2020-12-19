@@ -55,10 +55,9 @@ def send_logo(update, context):
 def get_random_jam_keyboard():
 
     song, date = phishnet_api.get_random_jamchart()
-    response = phishin_api.get_song_url(song=song, date=date)
     keyboard = [
         [
-            InlineKeyboardButton("Jam Link", url=response),
+            InlineKeyboardButton("Jam Link", url=phishin_api.get_song_url(song=song, date=date)),
         ],
         [
             InlineKeyboardButton("Show Link", url=f"phish.in/{date}"),
@@ -68,14 +67,14 @@ def get_random_jam_keyboard():
         ],
     ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = song, date, InlineKeyboardMarkup(keyboard)
     
     return reply_markup
     
 def random_jam(update, context):
     """Sends random jam"""
     
-    reply_markup = get_random_jam_keyboard()
+    song, date, reply_markup = get_random_jam_keyboard()
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=f"*Random Jam \U0001F420*\n{song} {date}",
