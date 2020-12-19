@@ -31,7 +31,7 @@ class PhishINAPI:
 
             mp3 = f'No mp3 for the song "{song}." Was the song spelled right and played on {date}?'
             for item in show_tracks:
-                if item["title"].lower() == song:
+                if item["title"].lower() == song.lower():
                     mp3 = item["mp3"]
 
             return mp3

@@ -54,6 +54,7 @@ def send_daily_jam(context):
     """Sends daily jam"""
     job = context.job
     response = phishin_api.get_song_url(song="Sand", date="1999-12-13")
+    print(response)
     if response.startswith("http"):
                 links_text = f""" \
                 Find info for the show at [phish.net]({phishnet_api.get_show_url(date)})\n\
@@ -73,7 +74,7 @@ def remove_job_if_exists(name, context):
     return True
 
 
-def daily_random_jam(update, context):
+def daily_jam(update, context):
     """Add a job to the queue"""
     chat_id = update.message.chat_id
     try:
@@ -100,7 +101,7 @@ def daily_random_jam(update, context):
         update.message.reply_text(text)
 
     except (IndexError, ValueError):
-        update.message.reply_text("Usage: /daily_random_jam")
+        update.message.reply_text("Usage: /daily_jam")
 
 
 def unset_daily_jam(update, context):
@@ -128,7 +129,7 @@ def main():
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("logo", send_logo))
-    dispatcher.add_handler(CommandHandler("daily_random_jam", daily_random_jam))
+    dispatcher.add_handler(CommandHandler("daily_jam", daily_jam))
     dispatcher.add_handler(CommandHandler("unset_daily_jam", unset_daily_jam))
 
     # error handler
