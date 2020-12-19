@@ -73,7 +73,7 @@ def random_jam(context):
 
     context.bot.send_message(
         job.context,
-        text=f"### ~~*Daily Phish Squeeze*~\~\n{song} {date}",
+        text=f"~*Daily Phish Squeeze*~\n{song} {date}",
         parse_mode="Markdown",
         reply_markup=reply_markup,
     )
