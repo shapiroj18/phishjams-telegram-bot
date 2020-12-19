@@ -58,11 +58,11 @@ def random_jam(context):
     response = phishin_api.get_song_url(song=song, date=date)
     if response.startswith("http"):
                 links_text = f""" \
-                Find info for the show at [phish.net]({phishnet_api.get_show_url(date)})\n\
-                Find audio for the full show at [phish.in](phish.in/{date})\
+                [Show Info]({phishnet_api.get_show_url(date)})\n\
+                [Show Audio](phish.in/{date})\
                 """
                 
-    context.bot.send_message(job.context, text=links_text)
+    context.bot.send_message(job.context, text=links_text, parse_mode = "Markdown")
     context.bot.send_audio(jobs.context, audio=response)
 
 
