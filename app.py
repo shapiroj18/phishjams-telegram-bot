@@ -58,15 +58,18 @@ def random_jam(context):
     date = "1999-12-13"
     response = phishin_api.get_song_url(song=song, date=date)
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
+    keyboard = [
+    [
+        InlineKeyboardButton("Button 1", callback_data='1'),
+        InlineKeyboardButton("Button 2", callback_data='2'),
+    ]]
+    
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    
     context.bot.send_message(
         job.context,
-        reply_markup=InlineKeyboardMarkup.inline_keyboard(
-            [
-                [InlineKeyboardButton(text="Random Jam", url="phish.in")],
-                [InlineKeyboardButton(text="Full Show", url="phish.in")],
-                [InlineKeyboardButton(text="Show Info", url="phish.net")],
-            ]
-        ),
+        reply_markup=replpy_markup
     )
 
 
