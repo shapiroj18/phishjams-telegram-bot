@@ -103,7 +103,7 @@ def daily_jam(update, context):
         context.job_queue.run_repeating(
             random_jam,
             first=datetime.datetime.now()
-            + timedelta(seconds=10),  # + datetime.timedelta(days=1),
+            + datetime.timedelta(seconds=10),  # + datetime.timedelta(days=1),
             interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
