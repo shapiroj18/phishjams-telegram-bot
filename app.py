@@ -60,7 +60,7 @@ def random_jam(context):
     links_text = f"""[Daily Jam]({response})\n[Show Info]({phishnet_api.get_show_url(date)})\n[Show Audio](phish.in/{date})"""
     context.bot.send_message(
         job.context,
-        reply_markup=InlineKeyboardMarkup(
+        reply_markup=InlineKeyboardMarkup.inline_keyboard(
             [
                 [InlineKeyboardButton(text="Random Jam", url="phish.in")],
                 [InlineKeyboardButton(text="Full Show", url="phish.in")],
