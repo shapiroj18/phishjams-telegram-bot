@@ -200,6 +200,7 @@ def main():
     dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
     dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
+    dispatcher.add_handler(CommandHandler("sponsor", sponsor))
 
     # non-understood commands
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
