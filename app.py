@@ -90,28 +90,31 @@ def random_jam(update, context):
     
     song, date, reply_markup = get_random_jam_keyboard()
     print(song, date)
-    while True:
-        try:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=f"*Random Jam \U0001F420*\n{song} {date}",
-                parse_mode="Markdown",
-                reply_markup=reply_markup,
-            )
-        except:
-            continue
+    try:
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"*Random Jam \U0001F420*\n{song} {date}",
+            parse_mode="Markdown",
+            reply_markup=reply_markup,
+        )
+    except:
+        random_jam(update, context)
 
 def random_jam_daily(context):
     """Sends daily jam"""
     job = context.job
 
     song, date, reply_markup = get_random_jam_keyboard()
-    context.bot.send_message(
-        job.context,
-        text=f"*Daily Squeeze \U0001F420*\n{song} {date}",
-        parse_mode="Markdown",
-        reply_markup=reply_markup,
-    )
+    print(song, date)
+    try:
+        context.bot.send_message(
+            job.context,
+            text=f"*Daily Squeeze \U0001F420*\n{song} {date}",
+            parse_mode="Markdown",
+            reply_markup=reply_markup,
+        )
+    except:
+        random_jam_daily(context)
 
 
 def remove_job_if_exists(name, context):
@@ -135,8 +138,8 @@ def daily_jam(update, context):
         start_send_time = datetime.datetime.combine(date_tomorrow, time_noon)
         context.job_queue.run_repeating(
             random_jam_daily,
-            first=start_send_time,
-            interval=datetime.timedelta(days=1),
+            # first=start_send_time,
+            interval=datetime.timedelta(seconds=2),
             context=chat_id,
             name=str(chat_id),
         )
