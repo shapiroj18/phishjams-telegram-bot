@@ -18,11 +18,24 @@ fi
 } &> /dev/null
 
 # flags (this is useful: https://pretzelhands.com/posts/command-line-flags)
+
 for arg in "$@"
 do
     case "$arg" in
         -p|--phish)
-        echo "Phish"
+        if [[ $(brew help) ]]; then
+
+            if [[ $(brew ls --versions figlet) ]]; then
+                figlet -f bulbhead "phish bot"
+            else
+                echo 'Installing Figlet via Homebrew'
+                brew install figlet
+                figlet -f bulbhead "phish bot"
+            fi
+
+        else
+            echo 'Install Homebrew if you want fun features at brew.sh'
+        fi
         shift
         ;;
     esac
