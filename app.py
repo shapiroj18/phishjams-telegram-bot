@@ -1,6 +1,7 @@
 import os
 import logging
 import datetime
+import pytz
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
     Updater,
@@ -133,11 +134,12 @@ def daily_jam(update, context):
     chat_id = update.message.chat_id
     try:
         job_removed = remove_job_if_exists(str(chat_id), context)
+        tzinfo = pytz.timezone("America/New_York")
 
         # run daily at noon
         context.job_queue.run_daily(
             random_jam_daily,
-            time=datetime.time(22, 48),
+            time=tzinfo.localize(datetime.time(23, 5)),
             context=chat_id,
             name=str(chat_id),
         )
