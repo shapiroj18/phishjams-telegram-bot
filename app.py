@@ -98,7 +98,7 @@ def random_jam(update, context):
             reply_markup=reply_markup,
         )
     except:
-        random_jam(update, context)
+        continue
 
 def random_jam_daily(context):
     """Sends daily jam"""
