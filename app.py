@@ -55,6 +55,9 @@ def send_logo(update, context):
 def get_random_jam_keyboard():
 
     song, date = phishnet_api.get_random_jamchart()
+    relisten_formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d").strftime(
+        "%Y/%m/%d"
+    )
     keyboard = [
         [
             InlineKeyboardButton(
@@ -62,11 +65,14 @@ def get_random_jam_keyboard():
             ),
         ],
         [
-            InlineKeyboardButton("Show Link (Desktop)", url=f"https://phish.in/{date}"),
+            InlineKeyboardButton(
+                "Show Link (Phish.in)", url=f"https://phish.in/{date}"
+            ),
         ],
         [
             InlineKeyboardButton(
-                "Show Link (Mobile)", url="https://relisten.net/phish/2003/12/28"
+                "Show Link (Relisten)",
+                url=f"https://relisten.net/phish/{relisten_formatted_date}",
             ),
         ],
         [
@@ -119,9 +125,13 @@ def daily_jam(update, context):
     chat_id = update.message.chat_id
     try:
         job_removed = remove_job_if_exists(str(chat_id), context)
+        # get datetime for tomorrow at noon to send first message)
+        date_tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+        time_noon = datetime.time(12)
+        start_send_time = datetime.datetime.combine(date_tomorrow, time_noon)
         context.job_queue.run_repeating(
             random_jam_daily,
-            first=datetime.datetime.now(),
+            first=start_send_time,
             interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
