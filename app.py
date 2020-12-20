@@ -90,13 +90,15 @@ def random_jam(update, context):
     
     song, date, reply_markup = get_random_jam_keyboard()
     print(song, date)
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=f"*Random Jam \U0001F420*\n{song} {date}",
-        parse_mode="Markdown",
-        reply_markup=reply_markup,
-    )
-
+    try:
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"*Random Jam \U0001F420*\n{song} {date}",
+            parse_mode="Markdown",
+            reply_markup=reply_markup,
+        )
+    except:
+        random_jam(update, context)
 
 def random_jam_daily(context):
     """Sends daily jam"""
