@@ -87,8 +87,9 @@ def get_random_jam_keyboard():
 
 def random_jam(update, context):
     """Sends random jam"""
-
+    
     song, date, reply_markup = get_random_jam_keyboard()
+    print(song, date)
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=f"*Random Jam \U0001F420*\n{song} {date}",
@@ -137,7 +138,7 @@ def daily_jam(update, context):
             name=str(chat_id),
         )
 
-        text = "Daily random jams successfully started! To unset use /unset_daily_jam."
+        text = "Daily random jams successfully started! You will receive them each day at 12pm EST.\nTo unset use /unset_daily_jam."
         update.message.reply_text(text)
 
     except (IndexError, ValueError):

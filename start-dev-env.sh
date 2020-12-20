@@ -21,8 +21,8 @@ fi
 for arg in "$@"
 do
     case "$arg" in
-        -r|--run)
-        flask run
+        -p|--phish)
+        echo "Phish"
         shift
         ;;
     esac
