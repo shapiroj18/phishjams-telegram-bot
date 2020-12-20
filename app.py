@@ -87,9 +87,9 @@ def get_random_jam_keyboard():
 
 def random_jam(update, context):
     """Sends random jam"""
-    
+
     song, date, reply_markup = get_random_jam_keyboard()
-    print(song, date)
+    logging.info(f"Pulled {song}, {date}")
     try:
         context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -100,12 +100,13 @@ def random_jam(update, context):
     except:
         random_jam(update, context)
 
+
 def random_jam_daily(context):
     """Sends daily jam"""
     job = context.job
 
     song, date, reply_markup = get_random_jam_keyboard()
-    print(song, date)
+    logging.info(f"Pulled {song}, {date}")
     try:
         context.bot.send_message(
             job.context,
@@ -132,14 +133,15 @@ def daily_jam(update, context):
     chat_id = update.message.chat_id
     try:
         job_removed = remove_job_if_exists(str(chat_id), context)
+
         # get datetime for tomorrow at noon to send first message)
         date_tomorrow = datetime.date.today() + datetime.timedelta(days=1)
         time_noon = datetime.time(12)
         start_send_time = datetime.datetime.combine(date_tomorrow, time_noon)
         context.job_queue.run_repeating(
             random_jam_daily,
-            # first=start_send_time,
-            interval=datetime.timedelta(seconds=2),
+            first=start_send_time,
+            interval=datetime.timedelta(days=1),
             context=chat_id,
             name=str(chat_id),
         )
