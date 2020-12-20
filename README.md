@@ -31,10 +31,9 @@ To Do:
 5. Mypy
 6. Black
 7. Phish Trivia Game!
-8. `make dev` Makefile, include setting up environment if doesn't exist, logging in to heroku if not logged in (try if/else statement) and then export creds to environment
-9. Create md file for commands
-10. Automatically send mjm when it gets posted
-11. Get email updates
-12. CI/CD
-13. See if pushing new build removes all previous jobs
-14. Commands: send_random_jam_now()
+8. Create md file for commands
+9.  Automatically send mjm when it gets posted
+10. Get email updates
+11. CI/CD
+12. See if pushing new build removes all previous jobs
+13. Httpx instead of Requests
