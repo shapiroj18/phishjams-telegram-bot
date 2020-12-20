@@ -137,7 +137,7 @@ def daily_jam(update, context):
         # run daily at noon
         context.job_queue.run_daily(
             random_jam_daily,
-            time=datetime.time(4, 7),
+            time=datetime.time(17),
             context=chat_id,
             name=str(chat_id),
         )
@@ -163,7 +163,7 @@ def unset_daily_jam(update, context):
 
 def sponsor(update, context):
         sponsorship_text = """ \
-        If you want to support the development of this project, please consider [contributing!](https://github.com/sponsors/shapiroj18)!
+        If you want to support the development of this project, please consider contributing!\n[Patreon](https://www.patreon.com/shapiroj18)\n[GitHub](https://github.com/sponsors/shapiroj18)!
         """
 
         context.bot.send_message(
