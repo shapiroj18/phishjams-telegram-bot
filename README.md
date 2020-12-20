@@ -7,14 +7,14 @@ The bot is called `@gone_phishing_bot`
 Deployed at `https://phish-telegram-bot.herokuapp.com/`
 
 Commands:
-Still in development
+Simply type `/` into Telegram when you are chatting with the bot or read `main()` of   `app.py`
 
 Notes:
 Environmental variables are stored as [heroku config vars](https://devcenter.heroku.com/articles/config-vars)
 
 Development:
 * You need [Python3](https://www.python.org/downloads/) and the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) installed.
-* Run `source start-dev-env.sh` to start virtual environment, log in to heroku and store local env variables. Begin local flask app with `-r` or `--run`.
+* Run `source start-dev-env.sh` to start virtual environment, log in to heroku and store local env variables. Include a Phishy surprise with `-p` or `--phish`.
 
 The environmental variables stored are:
 1. BOT_TOKEN=`bot_token` (token for `@gone_phishing_bot` from BotFather)

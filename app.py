@@ -134,14 +134,10 @@ def daily_jam(update, context):
     try:
         job_removed = remove_job_if_exists(str(chat_id), context)
 
-        # get datetime for tomorrow at noon to send first message)
-        date_tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-        time_noon = datetime.time(12)
-        start_send_time = datetime.datetime.combine(date_tomorrow, time_noon)
-        context.job_queue.run_repeating(
+        # run daily at noon
+        context.job_queue.run_daily(
             random_jam_daily,
-            first=start_send_time,
-            interval=datetime.timedelta(days=1),
+            time=datetime.time(22, 45),
             context=chat_id,
             name=str(chat_id),
         )
