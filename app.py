@@ -170,7 +170,7 @@ def sponsor(update, context):
         If you want to support the development of this project, please consider [contributing!](https://github.com/sponsors/shapiroj18)!
         """
 
-        bot.send_message(
+        context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=sponsorship_text,
             parse_mode="Markdown",
