@@ -142,7 +142,7 @@ def daily_jam(update, context):
             name=str(chat_id),
         )
 
-        text = "Daily random jams successfully started! You will receive them each day at 12pm EST.\nTo unset use /unset_daily_jam."
+        text = "Daily random jams successfully started! You will receive them each day at 12pm EST.\nTo unset use /unset."
         update.message.reply_text(text)
 
     except (IndexError, ValueError):
@@ -162,15 +162,15 @@ def unset_daily_jam(update, context):
 
 
 def sponsor(update, context):
-        sponsorship_text = """ \
-        If you want to support the development of this project, please consider contributing!\n[Patreon](https://www.patreon.com/shapiroj18)\n[GitHub](https://github.com/sponsors/shapiroj18)!
+    sponsorship_text = """ \
+        If you want to support the development of this project, please consider contributing!\n[Patreon](https://www.patreon.com/shapiroj18)\n[GitHub](https://github.com/sponsors/shapiroj18)
         """
 
-        context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=sponsorship_text,
-            parse_mode="Markdown",
-        )
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=sponsorship_text,
+        parse_mode="Markdown",
+    )
 
 
 def unknown(update, context):
