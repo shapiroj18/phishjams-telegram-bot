@@ -137,7 +137,7 @@ def daily_jam(update, context):
         # run daily at noon
         context.job_queue.run_daily(
             random_jam_daily,
-            time=datetime.time(22, 45),
+            time=datetime.time(22, 48),
             context=chat_id,
             name=str(chat_id),
         )
