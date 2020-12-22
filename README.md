@@ -37,3 +37,8 @@ To Do:
 11. CI/CD
 12. See if pushing new build removes all previous jobs
 13. Httpx instead of Requests
+14. Build Dev Env
+    * Create all functionality except the run in one file
+    * Create `start.logging()` for with dev bot for dev env
+    * Create `set_webhook()` for CI/CD with full bot for when I push
+15. CLI?
