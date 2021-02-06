@@ -2,6 +2,8 @@
 
 # Phish Telegram Bot
 
+NOTE: THIS IS DEPRACATED. PLEASE SEE THE REPO [PHISH BOT](https://github.com/shapiroj18/phish-bot)
+
 The bot is called `@gone_phishing_bot`
 
 Deployed at `https://phish-telegram-bot.herokuapp.com/`
