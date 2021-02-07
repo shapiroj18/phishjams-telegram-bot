@@ -26,7 +26,7 @@ def set_local_webhook():
 
 
 def view_local_webhook_info():
-    
+
     # set webhook
     url = f'https://api.telegram.org/bot{os.environ.get("TELEGRAM_BOT_TOKEN")}/getWebhookInfo'
     r = httpx.get(url)
