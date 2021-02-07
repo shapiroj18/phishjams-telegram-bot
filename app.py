@@ -1,6 +1,9 @@
 import os
 import logging
 import datetime
+import httpx
+import re
+import json
 from dotenv import load_dotenv
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
@@ -8,14 +11,13 @@ from telegram.ext import (
     CommandHandler,
     MessageHandler,
     Filters,
+    ConversationHandler,
 )
 
 load_dotenv()
 
 auth_key = os.getenv("TELEGRAM_BOT_TOKEN")
-print(auth_key)
 app_url = os.getenv("APP_URL")
-print(app_url)
 
 # Enable Logging
 logging.basicConfig(
@@ -27,28 +29,101 @@ PORT = int(os.environ.get("PORT", "8443"))
 
 # Start message
 def start(update, context):
-    """Send a message when the command /start is issued."""
+    """Initial Message"""
     welcome_message = """
-    Welcome to the Phish Bot!
-
-    See commands and functionality below:
-    `/start` Shows full menu of commands
-    `/randomjam` Sends random jam from phish.net's jamcharts
-    `/dailyjam` Schedules daily random jam sends
-    `/unset` Undoes daily random jam sends
-    `/logo` Sends photo of the classic logo
+    \U0001F420 Welcome to the Phish Bot! Send "/features" for bot commands!
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=welcome_message, parse_mode="Markdown"
     )
+    
+def features(update, context):
+    """Features of bot"""
+    features_message = """
+    <b>You can send me messages like:</b>
+    /subscribe (random daily jam emails)
+    /unsubscribe (remove daily jam emails)
+    """
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=features_message, parse_mode="HTML"
+    )
+    
+def help(update, context):
+    """Features of bot"""
+    features_message = """
+    <b>You can send me messages like:</b>
+    /subscribe (random daily jam emails)
+    /unsubscribe (remove daily jam emails)
+    """
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=features_message, parse_mode="HTML"
+    )
 
+# Subscription Handler
+SUBSCRIBE = range(1)
+    
+def get_subscriber_email(update, context):
+    """Get email from user"""
+    update.message.reply_text(
+        "Please send the email you would like to subscribe to daily random Phish Jams, or send /cancel."
+    )
+    
+    return SUBSCRIBE
+    
+def subscribe(update, context):
+    
+    """Subscribe for random daily jam emails"""
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    user = update.message.from_user
+    email = update.message.text
+    
 
-# Send logo
-def send_logo(update, context):
-    """Send ye old phish logo"""
-    logo_url = "http://4.bp.blogspot.com/_2CnQWIZQ3NY/SoDbSGrZnxI/AAAAAAAABVQ/tZ6OTg-AzyM/s320/phi.jpg"
-    context.bot.send_photo(chat_id=update.effective_chat.id, photo=logo_url)
+    match = re.search(r"\S+@\S+", email)
+    while match is not None:
+    
+        logger.info("Email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        data = {
+            'email': email,
+            'platform': 'Telegram'
+        }
+        r = httpx.post(f'{heroku_flask_url}/subscribe', data=data)
+        print(r.json())
+        message = f"You have successfully subscribed {email}!"
+        update.message.reply_text(
+            message
+        )
+        
+        return ConversationHandler.END
+    
+    else:
+        logger.info("Email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        message = f"Invalid email, please type again below, or send /cancel."
+        update.message.reply_text(
+            message
+        )
+        
+    
 
+def cancel(update, context):
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Subscription skipped, type /subscribe if you want to start over.'
+    )
+
+    return ConversationHandler.END
+
+# End Subscription Handler
+    
+def unsubscribe(update, context):
+    """Unsubscribe for random daily jam emails"""
+    message = """
+    Please send me the email you would like to unsubscribe.
+    """
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=message, parse_mode="HTML"
+    )
+    
 
 # # Send daily jam
 # def get_random_jam_keyboard():
@@ -175,7 +250,7 @@ def send_logo(update, context):
 def unknown(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Command not recognized. Write /start for possible commands.",
+        text="Command not recognized. Send \"/features\" for possible commands.",
     )
 
 
@@ -188,10 +263,21 @@ def main():
     # initialize bot
     updater = Updater(auth_key, use_context=True)
     dispatcher = updater.dispatcher
+    
+    sub_conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('subscribe', get_subscriber_email)],
+        states = {
+            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, subscribe)]
+        }, 
+        fallbacks=[CommandHandler('cancel', cancel)],
+    )
 
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("logo", send_logo))
+    dispatcher.add_handler(CommandHandler("features", features))
+    dispatcher.add_handler(CommandHandler("help", help))
+    dispatcher.add_handler(sub_conv_handler)
+    # dispatcher.add_handler(CommandHandler("subscribe", subscribe))
     # dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     # dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
     # dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
