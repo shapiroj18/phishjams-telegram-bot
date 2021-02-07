@@ -81,7 +81,7 @@ def subscribe(update, context):
     match = re.search(r"\S+@\S+", email)
     while match is not None:
     
-        logger.info("Email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        logger.info("Subscribe email sent by %s: %s", user.first_name + " " + user.last_name, email)
         data = {
             'email': email,
             'platform': 'Telegram'
@@ -96,7 +96,7 @@ def subscribe(update, context):
         return ConversationHandler.END
     
     else:
-        logger.info("Email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        logger.info("Subscribe email sent by %s: %s", user.first_name + " " + user.last_name, email)
         message = f"Invalid email, please type again below, or send /cancel."
         update.message.reply_text(
             message
@@ -104,7 +104,7 @@ def subscribe(update, context):
         
     
 
-def cancel(update, context):
+def cancel_sub(update, context):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
@@ -114,15 +114,58 @@ def cancel(update, context):
     return ConversationHandler.END
 
 # End Subscription Handler
+
+# Unsubscribe Handler
+UNSUBSCRIBE = range(1)
+
+def get_unsubscribe_email(update, context):
+    """Get email from user"""
+    update.message.reply_text(
+        "Please send the email you would like to unsubscribe to daily random Phish Jams, or send /cancel."
+    )
+    
+    return SUBSCRIBE
     
 def unsubscribe(update, context):
-    """Unsubscribe for random daily jam emails"""
-    message = """
-    Please send me the email you would like to unsubscribe.
-    """
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=message, parse_mode="HTML"
+    
+    """Subscribe for random daily jam emails"""
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    user = update.message.from_user
+    email = update.message.text
+    
+
+    match = re.search(r"\S+@\S+", email)
+    while match is not None:
+    
+        logger.info("Unsubscribe email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        data = {
+            'email': email,
+            'platform': 'Telegram'
+        }
+        r = httpx.post(f'{heroku_flask_url}/unsubscribe', data=data)
+        print(r.json())
+        message = f"You have successfully unsubscribed {email}!"
+        update.message.reply_text(
+            message
+        )
+        
+        return ConversationHandler.END
+    
+    else:
+        logger.info("Unsubscribe email sent by %s: %s", user.first_name + " " + user.last_name, email)
+        message = f"Invalid email, please type again below, or send /cancel."
+        update.message.reply_text(
+            message
+        )
+    
+def cancel_unsub(update, context):
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Subscription skipped, type /unsubscribe if you want to start over.'
     )
+
+    return ConversationHandler.END
     
 
 # # Send daily jam
@@ -269,7 +312,15 @@ def main():
         states = {
             SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, subscribe)]
         }, 
-        fallbacks=[CommandHandler('cancel', cancel)],
+        fallbacks=[CommandHandler('cancel', cancel_sub)],
+    )
+    
+    unsub_conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('unsubscribe', get_unsubscribe_email)],
+        states = {
+            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribe)]
+        }, 
+        fallbacks=[CommandHandler('cancel', cancel_unsub)],
     )
 
     # handlers
@@ -277,6 +328,7 @@ def main():
     dispatcher.add_handler(CommandHandler("features", features))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(sub_conv_handler)
+    dispatcher.add_handler(unsub_conv_handler)
     # dispatcher.add_handler(CommandHandler("subscribe", subscribe))
     # dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     # dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
