@@ -130,7 +130,7 @@ def get_unsubscribe_email(update, context):
         "Please send the email you would like to unsubscribe to daily random Phish Jams, or send /cancel."
     )
 
-    return SUBSCRIBE
+    return UNSUBSCRIBE
 
 
 def unsubscribe(update, context):
@@ -326,7 +326,7 @@ def main():
     unsub_conv_handler = ConversationHandler(
         entry_points=[CommandHandler("unsubscribe", get_unsubscribe_email)],
         states={
-            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribe)]
+            UNSUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribe)]
         },
         fallbacks=[CommandHandler("cancel", cancel_unsub)],
     )
