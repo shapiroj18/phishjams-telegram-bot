@@ -13,7 +13,9 @@ from telegram.ext import (
 load_dotenv()
 
 auth_key = os.environ.get("TELEGRAM_BOT_TOKEN")
-heroku_app_url = os.environ.get("APP_URL")
+print(auth_key)
+app_url = os.environ.get("APP_URL")
+print(app_url)
 
 # Enable Logging
 logging.basicConfig(
@@ -203,7 +205,8 @@ def main():
 
     # Start bot
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=auth_key)
-    updater.bot.set_webhook(heroku_app_url + auth_key)
+    updater.bot.set_webhook(app_url + auth_key)
+    updater.idle()
 
 
 if __name__ == "__main__":
