@@ -16,6 +16,7 @@ MarkupSafe==1.1.1
 mypy-extensions==0.4.3
 pathspec==0.8.1
 pycparser==2.20
+python-dotenv==0.15.0
 python-telegram-bot==13.1
 pytz==2020.4
 regex==2020.11.13

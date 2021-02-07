@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# pull environmental variables for config. -s denotes as shell format. will require login if you aren't logged in to cli.
-# sed replaces "'" with nothing
-export `heroku config -s --app=phish-telegram-bot | sed 's/'"'"'//g'`
-
 # set up venv
 {
 if [[ "$VIRTUAL_ENV" != "" ]]
