@@ -93,8 +93,12 @@ def subscribe(update, context):
         data = {"email": email, "platform": "Telegram"}
         r = httpx.post(f"{heroku_flask_url}/subscribe", data=data)
         print(r.json())
-        message = f"You have successfully subscribed {email}!"
-        update.message.reply_text(message)
+        if "subscribed successfully" in r.json():
+            message = f"You have successfully subscribed {email}!"
+            update.message.reply_text(message)
+        elif "error" in r.json():
+            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+            update.message.reply_text(message)
 
         return ConversationHandler.END
 
@@ -151,8 +155,15 @@ def unsubscribe(update, context):
         data = {"email": email, "platform": "Telegram"}
         r = httpx.post(f"{heroku_flask_url}/unsubscribe", data=data)
         print(r.json())
-        message = f"You have successfully unsubscribed {email}!"
-        update.message.reply_text(message)
+        if "removed successfully" in r.json():
+            message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribe."
+            update.message.reply_text(message)
+        elif "did not exist" in r.json():
+            message = f"{email} was not found in the database."
+            update.message.reply_text(message)
+        elif "error" in r.json():
+            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+            update.message.reply_text(message)
 
         return ConversationHandler.END
 
@@ -301,7 +312,7 @@ def cancel_unsub(update, context):
 def unknown(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text='Command not recognized. Send "/features" for possible commands.',
+        text="Command not recognized. Send /cancel to exit a process or /features for possible commands.",
     )
 
 
