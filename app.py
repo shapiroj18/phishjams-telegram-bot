@@ -122,9 +122,6 @@ def cancel_sub_daily_jam(update, context):
 
     return ConversationHandler.END
 
-
-# End Subscription Handler
-
 # Unsubscribe Handler
 UNSUBSCRIBE = range(1)
 
