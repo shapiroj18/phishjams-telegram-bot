@@ -19,17 +19,8 @@ The environmental variables stored are:
 4. PHISHNET_API_KEY=`api_key` (API Key for Phish.Net, [retrieved here](https://api.phish.net/request-key))
 5. PHISHIN_API_KEY=`api_key` (API Key for Phish.in can be requested at the [contacts page](https://phish.in/contact-info) and info about the api can be found in the [api docs](https://phish.in/api-docs))
 
-To Do:
-1. Make sure json responses for required functions are not more than one page with if/else
-2. Set option for only soundboards?
-3. Make date format acceptance broader than just YYYY-MM-DD
-4. Pytest
-5. Mypy
-6. Black
-7. Phish Trivia Game!
-8. Create md file for commands
-9.  Automatically send mjm when it gets posted
-10. Get email updates
-11. CI/CD
-12. See if pushing new build removes all previous jobs
-13. Httpx instead of Requests
+Ideas:
+1. Phish Trivia Game!
+2. Next Phish Show (location/date)
+3. Phish Radio (message bot the song you want to hear and adds a random jam of that song to the queue)
+   1. In-time pings of messages received?

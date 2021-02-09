@@ -41,9 +41,14 @@ def start(update, context):
 def features(update, context):
     """Features of bot"""
     features_message = """
-    <b>You can send me messages like:</b>
-    /subscribe (random daily jam emails)
-    /unsubscribe (remove daily jam emails)
+    <b>You can send me commands like:</b>
+    /randomjam (sends a random Phish jam)
+    /subscribedailyjam (random daily jam emails)
+    /unsubscribedailyjam (remove daily jam emails)
+    /subscribemjm (reminder when Mystery Jam Monday is posted)
+    /unsubscribemjm (remove MJM reminders)
+    /code (links to code repositories and contributing)
+    /support (information on supporting development)
     """
     context.bot.send_message(
         chat_id=update.effective_chat.id, text=features_message, parse_mode="HTML"
@@ -76,7 +81,6 @@ def get_subscriber_email_daily_jam(update, context):
 
 
 def subscribedailyjam(update, context):
-
     """Subscribe for random daily jam emails"""
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
     user = update.message.from_user
@@ -93,11 +97,12 @@ def subscribedailyjam(update, context):
         )
         data = {"email": email, "platform": "Telegram", "chat_id": chat_id}
         r = httpx.post(f"{heroku_flask_url}/subscribedailyjams", data=data)
-        print(r.json())
-        if "subscribed successfully" in r.json():
+        print(f"flask response: {r.json()}")
+        message_resp = r.json()["message"]
+        if "subscribed successfully" in message_resp:
             message = f"You have successfully subscribed {email}!"
             update.message.reply_text(message)
-        elif "error" in r.json():
+        elif "error" in message_resp:
             message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
             update.message.reply_text(message)
 
@@ -121,6 +126,7 @@ def cancel_sub_daily_jam(update, context):
     )
 
     return ConversationHandler.END
+
 
 # Unsubscribe Handler
 UNSUBSCRIBE = range(1)
@@ -152,14 +158,15 @@ def unsubscribedailyjam(update, context):
         )
         data = {"email": email, "platform": "Telegram"}
         r = httpx.post(f"{heroku_flask_url}/unsubscribedailyjams", data=data)
-        print(r.json())
-        if "removed successfully" in r.json():
-            message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribe."
+        print(f"flask response: {r.json()}")
+        message_resp = r.json()["message"]
+        if "removed successfully" in message_resp:
+            message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribedailyjam."
             update.message.reply_text(message)
-        elif "did not exist" in r.json():
+        elif "did not exist" in message_resp:
             message = f"{email} was not found in the database."
             update.message.reply_text(message)
-        elif "error" in r.json():
+        elif "error" in message_resp:
             message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
             update.message.reply_text(message)
 
@@ -183,6 +190,57 @@ def cancel_unsub_daily_jam(update, context):
     )
 
     return ConversationHandler.END
+
+
+# subscribe to MJM
+def subscribemjm(update, context):
+    """Subscribe for mjm notifications"""
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+
+    logger.info(
+        "MJM subscription sent by %s",
+        user.first_name + " " + user.last_name,
+    )
+
+    data = {"platform": "Telegram", "chat_id": chat_id}
+    r = httpx.post(f"{heroku_flask_url}/subscribemjm", data=data)
+    print(f"flask response: {r.json()}")
+    message_resp = r.json()["message"]
+    if "subscribed successfully" in message_resp:
+        message = f"You have successfully subscribed to MJM reminders!"
+        update.message.reply_text(message)
+    elif "error" in message_resp:
+        message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+        update.message.reply_text(message)
+
+
+# unsubscribe to MJM
+def unsubscribemjm(update, context):
+    """Subscribe for mjm notifications"""
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+
+    logger.info(
+        "MJM unsubscription sent by %s",
+        user.first_name + " " + user.last_name,
+    )
+
+    data = {"chat_id": chat_id}
+    r = httpx.post(f"{heroku_flask_url}/unsubscribemjm", data=data)
+    print(f"flask response: {r.json()}")
+    message_resp = r.json()["message"]
+    if "removed successfully" in message_resp:
+        message = f"You have successfully unsubscribed from MJM reminders. If you would like to resubscribe, send /subscribemjm. "
+        update.message.reply_text(message)
+    elif "did not exist" in message_resp:
+        message = f"You were not found in the database."
+        update.message.reply_text(message)
+    elif "error" in message_resp:
+        message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+        update.message.reply_text(message)
 
 
 def get_random_jam_keyboard(update, context):
@@ -219,7 +277,7 @@ def get_random_jam_keyboard(update, context):
     update.message.reply_text("Random Jam:", reply_markup=reply_markup)
 
 
-def contribute_to_dev_work(update, context):
+def code(update, context):
 
     keyboard = [
         [
@@ -238,7 +296,7 @@ def contribute_to_dev_work(update, context):
 
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="If you would like to help build out this project, please see repositories below. Feel free to reach out to Jonathan (shapiroj18@gmail.com) with any thoughts/questions!",
+        text="You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!",
         reply_markup=reply_markup,
     )
 
@@ -309,13 +367,14 @@ def main():
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("features", features))
+    dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
+    dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("randomjam", get_random_jam_keyboard))
-    dispatcher.add_handler(CommandHandler("development", contribute_to_dev_work))
+    dispatcher.add_handler(CommandHandler("code", code))
     dispatcher.add_handler(CommandHandler("support", support))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
-    # dispatcher.add_handler(CommandHandler("sponsor", sponsor))
 
     # non-understood commands
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
