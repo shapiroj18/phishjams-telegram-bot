@@ -66,7 +66,7 @@ def help(update, context):
 SUBSCRIBE = range(1)
 
 
-def get_subscriber_email(update, context):
+def get_subscriber_email_daily_jam(update, context):
     """Get email from user"""
     update.message.reply_text(
         "Please send the email you would like to subscribe to daily random Phish Jams, or send /cancel."
@@ -75,7 +75,7 @@ def get_subscriber_email(update, context):
     return SUBSCRIBE
 
 
-def subscribe(update, context):
+def subscribedailyjam(update, context):
 
     """Subscribe for random daily jam emails"""
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
@@ -91,7 +91,7 @@ def subscribe(update, context):
             email,
         )
         data = {"email": email, "platform": "Telegram"}
-        r = httpx.post(f"{heroku_flask_url}/subscribe", data=data)
+        r = httpx.post(f"{heroku_flask_url}/subscribedailyjams", data=data)
         print(r.json())
         if "subscribed successfully" in r.json():
             message = f"You have successfully subscribed {email}!"
@@ -112,7 +112,7 @@ def subscribe(update, context):
         update.message.reply_text(message)
 
 
-def cancel_sub(update, context):
+def cancel_sub_daily_jam(update, context):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
@@ -128,7 +128,7 @@ def cancel_sub(update, context):
 UNSUBSCRIBE = range(1)
 
 
-def get_unsubscribe_email(update, context):
+def get_unsubscribe_email_daily_jam(update, context):
     """Get email from user"""
     update.message.reply_text(
         "Please send the email you would like to unsubscribe to daily random Phish Jams, or send /cancel."
@@ -137,7 +137,7 @@ def get_unsubscribe_email(update, context):
     return UNSUBSCRIBE
 
 
-def unsubscribe(update, context):
+def unsubscribedailyjam(update, context):
 
     """Subscribe for random daily jam emails"""
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
@@ -153,7 +153,7 @@ def unsubscribe(update, context):
             email,
         )
         data = {"email": email, "platform": "Telegram"}
-        r = httpx.post(f"{heroku_flask_url}/unsubscribe", data=data)
+        r = httpx.post(f"{heroku_flask_url}/unsubscribedailyjams", data=data)
         print(r.json())
         if "removed successfully" in r.json():
             message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribe."
@@ -177,7 +177,7 @@ def unsubscribe(update, context):
         update.message.reply_text(message)
 
 
-def cancel_unsub(update, context):
+def cancel_unsub_daily_jam(update, context):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
@@ -187,38 +187,39 @@ def cancel_unsub(update, context):
     return ConversationHandler.END
 
 
-# # Send daily jam
-# def get_random_jam_keyboard():
+def get_random_jam_keyboard(update, context):
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    
+    r = httpx.get(f"{heroku_flask_url}/randomjam")
+    print(r)
+    # relisten_formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d").strftime(
+    #     "%Y/%m/%d"
+    # )
+    # keyboard = [
+    #     [
+    #         InlineKeyboardButton(
+    #             "Jam Link", url=jam_url
+    #         ),
+    #     ],
+    #     [
+    #         InlineKeyboardButton(
+    #             "Show Link (Phish.in)", url=f"https://phish.in/{date}"
+    #         ),
+    #     ],
+    #     [
+    #         InlineKeyboardButton(
+    #             "Show Link (Relisten)",
+    #             url=f"https://relisten.net/phish/{relisten_formatted_date}",
+    #         ),
+    #     ],
+    #     [
+    #         InlineKeyboardButton("Show Info", url=show_info),
+    #     ],
+    # ]
 
-#     song, date = phishnet_api.get_random_jamchart()
-#     relisten_formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d").strftime(
-#         "%Y/%m/%d"
-#     )
-#     keyboard = [
-#         [
-#             InlineKeyboardButton(
-#                 "Jam Link", url=phishin_api.get_song_url(song=song, date=date)
-#             ),
-#         ],
-#         [
-#             InlineKeyboardButton(
-#                 "Show Link (Phish.in)", url=f"https://phish.in/{date}"
-#             ),
-#         ],
-#         [
-#             InlineKeyboardButton(
-#                 "Show Link (Relisten)",
-#                 url=f"https://relisten.net/phish/{relisten_formatted_date}",
-#             ),
-#         ],
-#         [
-#             InlineKeyboardButton("Show Info", url=phishnet_api.get_show_url(date)),
-#         ],
-#     ]
+    # reply_markup = song, date, InlineKeyboardMarkup(keyboard)
 
-#     reply_markup = song, date, InlineKeyboardMarkup(keyboard)
-
-#     return reply_markup
+    # return reply_markup
 
 
 # def random_jam(update, context):
@@ -327,29 +328,28 @@ def main():
     dispatcher = updater.dispatcher
 
     sub_conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("subscribe", get_subscriber_email)],
+        entry_points=[CommandHandler("subscribedailyjam", get_subscriber_email_daily_jam)],
         states={
-            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, subscribe)]
+            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, subscribedailyjam)]
         },
-        fallbacks=[CommandHandler("cancel", cancel_sub)],
+        fallbacks=[CommandHandler("cancel", cancel_sub_daily_jam)],
     )
 
     unsub_conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("unsubscribe", get_unsubscribe_email)],
+        entry_points=[CommandHandler("unsubscribedailyjam", get_unsubscribe_email_daily_jam)],
         states={
-            UNSUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribe)]
+            UNSUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribedailyjam)]
         },
-        fallbacks=[CommandHandler("cancel", cancel_unsub)],
+        fallbacks=[CommandHandler("cancel", cancel_unsub_daily_jam)],
     )
 
     # handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("features", features))
     dispatcher.add_handler(CommandHandler("help", help))
+    dispatcher.add_handler(CommandHandler("randomjam", get_random_jam_keyboard))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
-    # dispatcher.add_handler(CommandHandler("subscribe", subscribe))
-    # dispatcher.add_handler(CommandHandler("randomjam", random_jam))
     # dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
     # dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
     # dispatcher.add_handler(CommandHandler("sponsor", sponsor))
