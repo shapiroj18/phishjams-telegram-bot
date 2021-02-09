@@ -2,12 +2,6 @@
 
 # Phish Telegram Bot
 
-NOTE: THIS IS DEPRACATED. PLEASE SEE THE REPO [PHISH BOT](https://github.com/shapiroj18/phish-bot)
-
-The bot is called `@gone_phishing_bot`
-
-Deployed at `https://phish-telegram-bot.herokuapp.com/`
-
 Commands:
 Simply type `/` into Telegram when you are chatting with the bot or read `main()` of   `app.py`
 
@@ -39,8 +33,3 @@ To Do:
 11. CI/CD
 12. See if pushing new build removes all previous jobs
 13. Httpx instead of Requests
-14. Build Dev Env
-    * Create all functionality except the run in one file
-    * Create `start.logging()` for with dev bot for dev env
-    * Create `set_webhook()` for CI/CD with full bot for when I push
-15. CLI?
