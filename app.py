@@ -191,7 +191,7 @@ def cancel_unsub_daily_jam(update, context):
 def get_random_jam_keyboard(update, context):
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
 
-    r = httpx.get(f"{heroku_flask_url}/randomjam")
+    r = httpx.get(f"{heroku_flask_url}randomjam")
     print(r.json())
     json_resp = r.json()
     relisten_formatted_date = datetime.datetime.strptime(
