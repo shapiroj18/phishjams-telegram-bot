@@ -191,7 +191,7 @@ def cancel_unsub_daily_jam(update, context):
 def get_random_jam_keyboard(update, context):
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
 
-    r = httpx.get(f"{heroku_flask_url}/randomjam")
+    r = httpx.get(f"{heroku_flask_url}randomjam")
     print(r.json())
     json_resp = r.json()
     relisten_formatted_date = datetime.datetime.strptime(
@@ -199,35 +199,71 @@ def get_random_jam_keyboard(update, context):
     ).strftime("%Y/%m/%d")
     keyboard = [
         [
-            InlineKeyboardButton(
-                "Jam Link", url="google.com"  # url = json_resp['jam_url']
-            ),
+            InlineKeyboardButton("Jam Link", url=json_resp["jam_url"]),
         ],
         [
             InlineKeyboardButton(
-                "Show Link (Phish.in)",
-                url="googlecom",  # url=f"https://phish.in/{json_resp['date']}"
+                "Show Link (Phish.in)", url=f"https://phish.in/{json_resp['date']}"
             ),
         ],
         [
             InlineKeyboardButton(
                 "Show Link (Relisten)",
-                url="google.com"
-                # url=f"https://relisten.net/phish/{relisten_formatted_date}",
+                url=f"https://relisten.net/phish/{relisten_formatted_date}",
+            ),
+        ],
+        [
+            InlineKeyboardButton("Show Info", url=json_resp["show_info"]),
+        ],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text("Random Jam:", reply_markup=reply_markup)
+
+
+def contribute_to_dev_work(update, context):
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "Telegram Bot", url="https://github.com/shapiroj18/phish-telegram-bot"
             ),
         ],
         [
             InlineKeyboardButton(
-                "Show Info",
-                url="google.com"
-                # url=json_resp['show_info']
+                "Web Application", url="https://github.com/shapiroj18/phish-bot"
             ),
         ],
     ]
 
-    reply_markup = json_resp["song"], json_resp["date"], InlineKeyboardMarkup(keyboard)
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text("Random Jam:", reply_markup=reply_markup)
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="If you would like to help build out this project, please see repositories below. Feel free to reach out to Jonathan (shapiroj18@gmail.com) with any thoughts/questions!",
+        reply_markup=reply_markup,
+    )
+
+
+def support(update, context):
+
+    keyboard = [
+        [
+            InlineKeyboardButton("Ko-Fi", url="https://ko-fi.com/shapiroj18"),
+        ],
+        [
+            InlineKeyboardButton("Patreon", url="https://www.patreon.com/shapiro18"),
+        ],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="This bot is not cheap to build! If you want to support the development of this project, please consider contributing.",
+        reply_markup=reply_markup,
+    )
 
 
 def unknown(update, context):
@@ -278,6 +314,8 @@ def main():
     dispatcher.add_handler(CommandHandler("features", features))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("randomjam", get_random_jam_keyboard))
+    dispatcher.add_handler(CommandHandler("development", contribute_to_dev_work))
+    dispatcher.add_handler(CommandHandler("support", support))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
     # dispatcher.add_handler(CommandHandler("sponsor", sponsor))
