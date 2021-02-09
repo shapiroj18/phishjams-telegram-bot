@@ -81,6 +81,7 @@ def subscribedailyjam(update, context):
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
     user = update.message.from_user
     email = update.message.text
+    chat_id = update.message.chat_id
 
     match = re.search(r"\S+@\S+", email)
     while match is not None:
@@ -90,7 +91,7 @@ def subscribedailyjam(update, context):
             user.first_name + " " + user.last_name,
             email,
         )
-        data = {"email": email, "platform": "Telegram"}
+        data = {"email": email, "platform": "Telegram", "chat_id": chat_id}
         r = httpx.post(f"{heroku_flask_url}/subscribedailyjams", data=data)
         print(r.json())
         if "subscribed successfully" in r.json():
@@ -189,125 +190,44 @@ def cancel_unsub_daily_jam(update, context):
 
 def get_random_jam_keyboard(update, context):
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    
+
     r = httpx.get(f"{heroku_flask_url}/randomjam")
-    print(r)
-    # relisten_formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d").strftime(
-    #     "%Y/%m/%d"
-    # )
-    # keyboard = [
-    #     [
-    #         InlineKeyboardButton(
-    #             "Jam Link", url=jam_url
-    #         ),
-    #     ],
-    #     [
-    #         InlineKeyboardButton(
-    #             "Show Link (Phish.in)", url=f"https://phish.in/{date}"
-    #         ),
-    #     ],
-    #     [
-    #         InlineKeyboardButton(
-    #             "Show Link (Relisten)",
-    #             url=f"https://relisten.net/phish/{relisten_formatted_date}",
-    #         ),
-    #     ],
-    #     [
-    #         InlineKeyboardButton("Show Info", url=show_info),
-    #     ],
-    # ]
+    print(r.json())
+    json_resp = r.json()
+    relisten_formatted_date = datetime.datetime.strptime(
+        json_resp["date"], "%Y-%m-%d"
+    ).strftime("%Y/%m/%d")
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "Jam Link", url="google.com"  # url = json_resp['jam_url']
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                "Show Link (Phish.in)",
+                url="googlecom",  # url=f"https://phish.in/{json_resp['date']}"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                "Show Link (Relisten)",
+                url="google.com"
+                # url=f"https://relisten.net/phish/{relisten_formatted_date}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                "Show Info",
+                url="google.com"
+                # url=json_resp['show_info']
+            ),
+        ],
+    ]
 
-    # reply_markup = song, date, InlineKeyboardMarkup(keyboard)
+    reply_markup = json_resp["song"], json_resp["date"], InlineKeyboardMarkup(keyboard)
 
-    # return reply_markup
-
-
-# def random_jam(update, context):
-#     """Sends random jam"""
-
-#     song, date, reply_markup = get_random_jam_keyboard()
-#     logging.info(f"Pulled {song}, {date}")
-#     try:
-#         context.bot.send_message(
-#             chat_id=update.effective_chat.id,
-#             text=f"*Random Jam \U0001F420*\n{song} {date}",
-#             parse_mode="Markdown",
-#             reply_markup=reply_markup,
-#         )
-#     except:
-#         random_jam(update, context)
-
-
-# def random_jam_daily(context):
-#     """Sends daily jam"""
-#     job = context.job
-
-#     song, date, reply_markup = get_random_jam_keyboard()
-#     logging.info(f"Pulled {song}, {date}")
-#     try:
-#         context.bot.send_message(
-#             job.context,
-#             text=f"*Daily Squeeze \U0001F420*\n{song} {date}",
-#             parse_mode="Markdown",
-#             reply_markup=reply_markup,
-#         )
-#     except:
-#         random_jam_daily(context)
-
-
-# def remove_job_if_exists(name, context):
-#     """Remove job with given name. Returns whether job was removed."""
-#     current_jobs = context.job_queue.get_jobs_by_name(name)
-#     if not current_jobs:
-#         return False
-#     for job in current_jobs:
-#         job.schedule_removal()
-#     return True
-
-
-# def daily_jam(update, context):
-#     """Add a job to the queue"""
-#     chat_id = update.message.chat_id
-#     try:
-#         job_removed = remove_job_if_exists(str(chat_id), context)
-
-#         # run daily at noon
-#         context.job_queue.run_daily(
-#             random_jam_daily,
-#             time=datetime.time(17),
-#             context=chat_id,
-#             name=str(chat_id),
-#         )
-
-#         text = "Daily random jams successfully started! You will receive them each day at 12pm EST.\nTo unset use /unset."
-#         update.message.reply_text(text)
-
-#     except (IndexError, ValueError):
-#         update.message.reply_text("Usage: /daily_jam")
-
-
-# def unset_daily_jam(update, context):
-#     """Remove the job if the user changed their mind"""
-#     chat_id = update.message.chat_id
-#     job_removed = remove_job_if_exists(str(chat_id), context)
-#     text = (
-#         "Daily jams successfully cancelled"
-#         if job_removed
-#         else "You have no active daily random jams"
-#     )
-#     update.message.reply_text(text)
-
-
-# def sponsor(update, context):
-#     sponsorship_text = """ \
-#         If you want to support the development of this project, please consider contributing!\n[Patreon](https://www.patreon.com/shapiroj18)\n[GitHub](https://github.com/sponsors/shapiroj18)
-#         """
-
-#     context.bot.send_message(
-#         chat_id=update.effective_chat.id,
-#         text=sponsorship_text,
-#         parse_mode="Markdown",
-#     )
+    update.message.reply_text("Random Jam:", reply_markup=reply_markup)
 
 
 def unknown(update, context):
@@ -328,19 +248,29 @@ def main():
     dispatcher = updater.dispatcher
 
     sub_conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("subscribedailyjam", get_subscriber_email_daily_jam)],
+        entry_points=[
+            CommandHandler("subscribedailyjam", get_subscriber_email_daily_jam)
+        ],
         states={
-            SUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, subscribedailyjam)]
+            SUBSCRIBE: [
+                MessageHandler(Filters.text & ~Filters.command, subscribedailyjam)
+            ]
         },
         fallbacks=[CommandHandler("cancel", cancel_sub_daily_jam)],
+        conversation_timeout=20.0,
     )
 
     unsub_conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("unsubscribedailyjam", get_unsubscribe_email_daily_jam)],
+        entry_points=[
+            CommandHandler("unsubscribedailyjam", get_unsubscribe_email_daily_jam)
+        ],
         states={
-            UNSUBSCRIBE: [MessageHandler(Filters.text & ~Filters.command, unsubscribedailyjam)]
+            UNSUBSCRIBE: [
+                MessageHandler(Filters.text & ~Filters.command, unsubscribedailyjam)
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel_unsub_daily_jam)],
+        conversation_timeout=20.0,
     )
 
     # handlers
@@ -350,8 +280,6 @@ def main():
     dispatcher.add_handler(CommandHandler("randomjam", get_random_jam_keyboard))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
-    # dispatcher.add_handler(CommandHandler("dailyjam", daily_jam))
-    # dispatcher.add_handler(CommandHandler("unset", unset_daily_jam))
     # dispatcher.add_handler(CommandHandler("sponsor", sponsor))
 
     # non-understood commands
