@@ -45,7 +45,7 @@ def features(update, context):
     /randomjam (sends a random Phish jam)
     /subscribedailyjam (random daily jam emails)
     /unsubscribedailyjam (remove daily jam emails)
-    /subscribemjm (reminder when Mystery Jam Monday is posted)
+    /subscribemjm (reminder when mystery jam monday is posted)
     /unsubscribemjm (remove MJM reminders)
     /code (links to code repositories and contributing)
     /support (information on supporting development)
@@ -274,7 +274,7 @@ def get_random_jam_keyboard(update, context):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text("Random Jam:", reply_markup=reply_markup)
+    update.message.reply_text(f"Random Jam:\n{json_resp['song']} {json_resp['date']}", reply_markup=reply_markup)
 
 
 def code(update, context):
