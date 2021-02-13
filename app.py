@@ -308,7 +308,7 @@ def support(update, context):
             InlineKeyboardButton("Ko-Fi", url="https://ko-fi.com/shapiroj18"),
         ],
         [
-            InlineKeyboardButton("Patreon", url="https://www.patreon.com/shapiro18"),
+            InlineKeyboardButton("GitHub", url="https://github.com/sponsors/shapiroj18"),
         ],
     ]
 
