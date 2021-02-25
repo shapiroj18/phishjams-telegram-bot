@@ -246,35 +246,55 @@ def unsubscribemjm(update, context):
 def get_random_jam_keyboard(update, context):
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
 
-    r = httpx.get(f"{heroku_flask_url}randomjam")
+    arguments = context.args
+    song = " ".join(arguments)
+
+    print(song)
+
+    data = {"song": song}
+
+    r = httpx.post(f"{heroku_flask_url}/randomjam", data=data)
     print(r.json())
     json_resp = r.json()
-    relisten_formatted_date = datetime.datetime.strptime(
-        json_resp["date"], "%Y-%m-%d"
-    ).strftime("%Y/%m/%d")
-    keyboard = [
-        [
-            InlineKeyboardButton("Jam Link", url=json_resp["jam_url"]),
-        ],
-        [
-            InlineKeyboardButton(
-                "Show Link (Phish.in)", url=f"https://phish.in/{json_resp['date']}"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                "Show Link (Relisten)",
-                url=f"https://relisten.net/phish/{relisten_formatted_date}",
-            ),
-        ],
-        [
-            InlineKeyboardButton("Show Info", url=json_resp["show_info"]),
-        ],
-    ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    if "response" in json_resp:
+        update.message.reply_text(json_resp["response"])
+    else:
+        relisten_formatted_date = datetime.datetime.strptime(
+            json_resp["date"], "%Y-%m-%d"
+        ).strftime("%Y/%m/%d")
 
-    update.message.reply_text(f"Random Jam:\n{json_resp['song']} {json_resp['date']}", reply_markup=reply_markup)
+        if json_resp["jam_url"]:
+            jam_url = json_resp["jam_url"]
+        else:
+            jam_url = f"https://phish.in/{json_resp['date']}"
+
+        keyboard = [
+            [
+                InlineKeyboardButton("Jam Link", url=jam_url),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Show Link (Phish.in)", url=f"https://phish.in/{json_resp['date']}"
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    "Show Link (Relisten)",
+                    url=f"https://relisten.net/phish/{relisten_formatted_date}",
+                ),
+            ],
+            [
+                InlineKeyboardButton("Show Info", url=json_resp["show_info"]),
+            ],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text(
+            f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
+            reply_markup=reply_markup,
+        )
 
 
 def code(update, context):
@@ -308,7 +328,9 @@ def support(update, context):
             InlineKeyboardButton("Ko-Fi", url="https://ko-fi.com/shapiroj18"),
         ],
         [
-            InlineKeyboardButton("GitHub", url="https://github.com/sponsors/shapiroj18"),
+            InlineKeyboardButton(
+                "GitHub", url="https://github.com/sponsors/shapiroj18"
+            ),
         ],
     ]
 
