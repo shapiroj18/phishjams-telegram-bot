@@ -249,8 +249,6 @@ def get_random_jam_keyboard(update, context):
     arguments = context.args
     song = " ".join(arguments)
 
-    print(song)
-
     data = {"song": song}
 
     r = httpx.post(f"{heroku_flask_url}/randomjam", data=data)
