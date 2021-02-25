@@ -24,4 +24,4 @@ Ideas:
 2. Next Phish Show (location/date)
 3. Phish Radio (message bot the song you want to hear and adds a random jam of that song to the queue)
    1. In-time pings of messages received?
-4. Random Jam by Year
+4. Random Jam by Year and Song
