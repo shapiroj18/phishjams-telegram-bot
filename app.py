@@ -191,28 +191,29 @@ def cancel_unsub_daily_jam(update, context):
 
     return ConversationHandler.END
 
+
 # Queue Handler
 def add_playlist_jam(update, context):
     """Get random jam and ask user if they want to add"""
-    
+
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    
+
     while True:
         user = update.message.from_user.first_name
         print(user)
         chat_id = update.message.chat_id
         data = {
-            'platform': 'Telegram',
-            'chat_id': chat_id,
-            'user_first_name': user,
+            "platform": "Telegram",
+            "chat_id": chat_id,
+            "user_first_name": user,
         }
         r = httpx.post(f"{heroku_flask_url}/addtoqueue", data=data)
-        if r.json()['jam_url']:
+        if r.json()["jam_url"]:
             break
-    
-    song = r.json()['song']
-    date = r.json()['date']
-    
+
+    song = r.json()["song"]
+    date = r.json()["date"]
+
     update.message.reply_text(
         f"{song} from {date} has been added. Please find the playlist at {heroku_flask_url}",
     )
