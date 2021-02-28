@@ -5,7 +5,7 @@ import httpx
 import re
 import json
 from dotenv import load_dotenv
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -190,6 +190,32 @@ def cancel_unsub_daily_jam(update, context):
     )
 
     return ConversationHandler.END
+
+# Queue Handler
+def add_playlist_jam(update, context):
+    """Get random jam and ask user if they want to add"""
+    
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    
+    while True:
+        user = update.message.from_user.first_name
+        print(user)
+        chat_id = update.message.chat_id
+        data = {
+            'platform': 'Telegram',
+            'chat_id': chat_id,
+            'user_first_name': user,
+        }
+        r = httpx.post(f"{heroku_flask_url}/addtoqueue", data=data)
+        if r.json()['jam_url']:
+            break
+    
+    song = r.json()['song']
+    date = r.json()['date']
+    
+    update.message.reply_text(
+        f"{song} from {date} has been added. Please find the playlist at {heroku_flask_url}",
+    )
 
 
 # subscribe to MJM
@@ -389,6 +415,7 @@ def main():
     dispatcher.add_handler(CommandHandler("features", features))
     dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
     dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
+    dispatcher.add_handler(CommandHandler("queue", add_playlist_jam))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("randomjam", get_random_jam_keyboard))
     dispatcher.add_handler(CommandHandler("code", code))
