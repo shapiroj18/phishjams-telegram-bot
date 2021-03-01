@@ -198,13 +198,30 @@ ADDJAM, ADDSPECIFICJAM = range(2)
 
 def add_queue_jam(update, context):
     """Get random or specific jam data from user"""
-    reply_keyboard = [["Random"], ["I had a specific one in mind"]]
-    update.message.reply_text(
-        f"Did you want to add a specific or random jam to the playlist?",
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
-    )
+    
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    chat_id = update.message.chat_id
+    data = {
+        "chat_id": chat_id,
+    }
+    r = httpx.post(f"{heroku_flask_url}/checkqueuestatus", data=data)
+    print(r.json())
+    
+    if r.json()['response'] == "Maximums not hit":
+            
+        reply_keyboard = [["Random"], ["I had a specific one in mind"]]
+        update.message.reply_text(
+            f"Did you want to add a specific or random jam to the playlist (please add up to 5/day)?",
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+        )
 
-    return ADDJAM
+        return ADDJAM
+    
+    else:
+        update.message.reply_text(
+            r.json()['response']
+        )
+        return ConversationHandler.END
 
 
 def queue_jam(update, context):
