@@ -191,19 +191,21 @@ def cancel_unsub_daily_jam(update, context):
 
     return ConversationHandler.END
 
+
 # Subscription Handler
 ADDJAM, ADDSPECIFICJAM = range(2)
 
 
 def add_queue_jam(update, context):
     """Get random or specific jam data from user"""
-    reply_keyboard = [['Random'], ['I had a specific one in mind']]
+    reply_keyboard = [["Random"], ["I had a specific one in mind"]]
     update.message.reply_text(
-       f"Did you want to add a specific or random jam to the playlist?",
-       reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+        f"Did you want to add a specific or random jam to the playlist?",
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
     return ADDJAM
+
 
 def queue_jam(update, context):
     """Get random or specific jam and add to playlist"""
@@ -229,16 +231,17 @@ def queue_jam(update, context):
         update.message.reply_text(
             f"{song} from {date} has been added! Please find the playlist at {heroku_flask_url}",
         )
-        
+
         return ConversationHandler.END
-        
+
     else:
         update.message.reply_text(
-            'Please enter the jam you would like to add.\nFor example: 2000-06-14 Twist'
+            "Please enter the jam you would like to add.\nFor example: 2000-06-14 Twist"
         )
-        
+
         return ADDSPECIFICJAM
-    
+
+
 def queue_specific_jam(update, context):
     """Adds specific jam if user inputs correctly. Otherwise, ends conversation."""
     response = update.message.text
@@ -247,16 +250,16 @@ def queue_specific_jam(update, context):
     jam_date = response.split()[0]
     match_jam_date = re.search(r"\d\d\d\d-\d\d-\d\d", jam_date)
     song_list = response.split()[1:]
-    song = ' '.join(song_list)
+    song = " ".join(song_list)
     heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
 
-    while match_jam_date is not None: #and song:
+    while match_jam_date is not None:  # and song:
         logger.info(
             "Jam sent by %s: %s",
             user.first_name + " " + user.last_name,
-            jam_date + ' ' + song,
+            jam_date + " " + song,
         )
-        
+
         data = {
             "platform": "Telegram",
             "chat_id": chat_id,
@@ -269,26 +272,33 @@ def queue_specific_jam(update, context):
 
         if "response" in json_resp:
             update.message.reply_text(json_resp["response"])
-            
+
             return ADDSPECIFICJAM
-        
-        else:    
-            logger.info("User %s has added %s %s.", user.first_name + ' ' + user.last_name, song, jam_date)
+
+        else:
+            logger.info(
+                "User %s has added %s %s.",
+                user.first_name + " " + user.last_name,
+                song,
+                jam_date,
+            )
             update.message.reply_text(
                 f"{jam_date} {song} has been added! Please find the playlist at {heroku_flask_url}",
             )
-        
+
             return ConversationHandler.END
-    
+
     else:
         logger.info(
             "Jam sent by %s: %s",
             user.first_name + " " + user.last_name,
-            jam_date + ' ' + song,
+            jam_date + " " + song,
         )
-        message = f"Invalid format, please type again as \"YYYY-MM-DD song\" , or send /cancel."
+        message = (
+            f'Invalid format, please type again as "YYYY-MM-DD song" , or send /cancel.'
+        )
         update.message.reply_text(message)
-    
+
 
 def cancel_queue_jam(update, context):
     user = update.message.from_user
@@ -491,18 +501,14 @@ def main():
         fallbacks=[CommandHandler("cancel", cancel_unsub_daily_jam)],
         conversation_timeout=20.0,
     )
-    
+
     queue_jam_handler = ConversationHandler(
-        entry_points=[
-            CommandHandler("queue", add_queue_jam)
-        ],
+        entry_points=[CommandHandler("queue", add_queue_jam)],
         states={
-            ADDJAM: [
-                MessageHandler(Filters.text & ~Filters.command, queue_jam)
-            ],
+            ADDJAM: [MessageHandler(Filters.text & ~Filters.command, queue_jam)],
             ADDSPECIFICJAM: [
                 MessageHandler(Filters.text & ~Filters.command, queue_specific_jam)
-            ]
+            ],
         },
         fallbacks=[CommandHandler("cancel", cancel_queue_jam)],
         conversation_timeout=20.0,
