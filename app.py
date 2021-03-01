@@ -211,7 +211,7 @@ def add_queue_jam(update, context):
             
         reply_keyboard = [["Random"], ["I had a specific one in mind"]]
         update.message.reply_text(
-            f"Did you want to add a specific or random jam to the playlist (please add up to 5/day)?",
+            f"Did you want to add a specific or random jam to the playlist?",
             reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
         )
 
