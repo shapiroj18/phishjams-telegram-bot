@@ -40,8 +40,10 @@ def start(update, context):
 
 def features(update, context):
     """Features of bot"""
-    features_message = """
+    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+    features_message = f"""
     <b>You can send me commands like:</b>
+    /queue (let's you add a random or specific jam to the online player: {heroku_flask_url})
     /randomjam (sends a random Phish jam)
     /subscribedailyjam (random daily jam emails)
     /unsubscribedailyjam (remove daily jam emails)
