@@ -42,3 +42,20 @@ class FinalCommands:
         )
 
         return sub_conversation_handler
+
+    def unsubscription_conversation_handler(self) -> ConversationHandler:
+        unsub_conversation_handler = self.basic_commands.create_conversation_handler(
+            entry_points=[
+                CommandHandler(
+                    "unsubscribedailyjam", self.messages.get_unsubscribe_email_daily_jam
+                )
+            ],
+            states={
+                self.messages.UNSUBSCRIBE: [
+                    MessageHandler(Filters.text & ~Filters.command, self.messages.unsubscribe_daily_jam)
+                ]
+            },
+            fallbacks=[CommandHandler("cancel", self.messages.cancel_sub_daily_jam)],
+        )
+        
+        return unsub_conversation_handler
