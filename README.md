@@ -18,14 +18,17 @@ Dependencies:
 * [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
 * [`jq`](https://stedolan.github.io/jq/)
 
+Testing:
+From the project root, run `python -m pytest`
+
 The environmental variables stored are:
 1. BOT_TOKEN=`bot_token` (token for `@gone_phishing_bot` from BotFather)
 2. BOT_USERNAME=`username` (username for `@gone_phishing_bot` from BotFather)
 3. URL=`url` (url of heroku app)
 
 Ideas:
-1. Phish Trivia Game!
+1. Phish Trivia Game
 2. Next Phish Show (location/date)
-3. Phish Radio (message bot the song you want to hear and adds a random jam of that song to the queue)
-   1. In-time pings of messages received?
-4. Random Jam by Year and Song
+
+To Do:
+It seems pretty difficult to write integration tests for telegram. The best article I could find on it was using [telethon](https://docs.telethon.dev/en/latest/index.html) and can be found [here](https://blog.1a23.com/2020/03/06/how-to-write-integration-tests-for-a-telegram-bot/).
