@@ -13,19 +13,20 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-from commands.final_commands import FinalCommands
+from commands.bot_functionality.final_commands import FinalCommands
 
-# load environment variables
 
 def setup():
-    
+
+    # load environment variables
     load_dotenv()
     auth_key = os.getenv("TELEGRAM_BOT_TOKEN")
     app_url = os.getenv("APP_URL")
 
     # Enable Logging
     logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=logging.INFO,
     )
     logger = logging.getLogger(__name__)
 
@@ -34,8 +35,9 @@ def setup():
 
     # load commands
     commands = FinalCommands()
-    
+
     return auth_key, app_url, logger, PORT, commands
+
 
 auth_key, app_url, logger, PORT, commands = setup()
 
@@ -375,7 +377,9 @@ def random_jam_response(update, context):
         )
         return YEARSONG_RANDOM
     else:
-        update.message.reply_text("Something went wrong, please try again by typing /randomjam.")
+        update.message.reply_text(
+            "Something went wrong, please try again by typing /randomjam."
+        )
         return ConversationHandler.END
 
 
@@ -392,13 +396,13 @@ def true_random(update, context):
 def year_random(update, context):
     response = update.message.text
     year = response
-    match_year = re.search('^\d{4}$', year)
+    match_year = re.search("^\d{4}$", year)
     while match_year is not None:
-        
+
         json_resp, reply_markup = get_random_jam_keyboard(year=year)
         if "resp" in json_resp:
             update.message.reply_text(
-                'Not a valid year. Please try again with /randomjam and a valid year (usually 1983 to current year)',
+                "Not a valid year. Please try again with /randomjam and a valid year (usually 1983 to current year)",
             )
             return ConversationHandler.END
         else:
@@ -407,10 +411,10 @@ def year_random(update, context):
                 reply_markup=reply_markup,
             )
             return ConversationHandler.END
-    
+
     else:
         update.message.reply_text(
-            'Incorrect format. Make sure you correctly use a four digit year.'
+            "Incorrect format. Make sure you correctly use a four digit year."
         )
 
 
@@ -429,23 +433,22 @@ def yearsong_random(update, context):
     response = update.message.text
     match_year_song = re.search(r"^\d{4}\s.*$", response)
     while match_year_song is not None:
-           
+
         year = response.split()[0]
         song_list = response.split()[1:]
-        song = ' '.join(song_list)
+        song = " ".join(song_list)
         print(year, song)
-        
-        
+
         json_resp, reply_markup = get_random_jam_keyboard(song=song, year=year)
         update.message.reply_text(
             f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
             reply_markup=reply_markup,
         )
         return ConversationHandler.END
-    
+
     else:
         update.message.reply_text(
-            'Incorrect format. Make sure you specify the year and then the song (e.g. 2003 Scents and Subtle Sounds).'
+            "Incorrect format. Make sure you specify the year and then the song (e.g. 2003 Scents and Subtle Sounds)."
         )
 
 
@@ -457,6 +460,7 @@ def cancel_random_jam(update, context):
     )
 
     return ConversationHandler.END
+
 
 def code(update, context):
 
@@ -518,7 +522,11 @@ def main():
         entry_points=[CommandHandler("randomjam", random_jam)],
         states={
             RANDOMJAM: [
-                MessageHandler(Filters.regex('^Random|Year|Song|Year and Song$') & ~Filters.command, random_jam_response)
+                MessageHandler(
+                    Filters.regex("^Random|Year|Song|Year and Song$")
+                    & ~Filters.command,
+                    random_jam_response,
+                )
             ],
             # TRUE_RANDOM: [MessageHandler(Filters.regex('^Random$') & ~Filters.command, true_random)],
             YEAR_RANDOM: [MessageHandler(Filters.text & ~Filters.command, year_random)],
@@ -565,6 +573,7 @@ def main():
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=auth_key)
     updater.bot.set_webhook(app_url + auth_key)
     updater.idle()
-    
+
+
 if __name__ == "__main__":
     main()
