@@ -41,71 +41,7 @@ def setup():
 
 auth_key, app_url, logger, PORT, commands = setup()
 
-# Unsubscribe Handler
-UNSUBSCRIBE = range(1)
-
-
-def get_unsubscribe_email_daily_jam(update, context):
-    """Get email from user"""
-    update.message.reply_text(
-        "Please send the email you would like to unsubscribe to daily random Phish Jams, or send /cancel."
-    )
-
-    return UNSUBSCRIBE
-
-
-def unsubscribedailyjam(update, context):
-
-    """Subscribe for random daily jam emails"""
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    user = update.message.from_user
-    email = update.message.text
-
-    match = re.search(r"\S+@\S+", email)
-    while match is not None:
-
-        logger.info(
-            "Unsubscribe email sent by %s: %s",
-            user.first_name + " " + user.last_name,
-            email,
-        )
-        data = {"email": email, "platform": "Telegram"}
-        r = httpx.post(f"{heroku_flask_url}/unsubscribedailyjams", data=data)
-        print(f"flask response: {r.json()}")
-        message_resp = r.json()["message"]
-        if "removed successfully" in message_resp:
-            message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribedailyjam."
-            update.message.reply_text(message)
-        elif "did not exist" in message_resp:
-            message = f"{email} was not found in the database."
-            update.message.reply_text(message)
-        elif "error" in message_resp:
-            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
-            update.message.reply_text(message)
-
-        return ConversationHandler.END
-
-    else:
-        logger.info(
-            "Unsubscribe email sent by %s: %s",
-            user.first_name + " " + user.last_name,
-            email,
-        )
-        message = f"Invalid email, please type again below, or send /cancel."
-        update.message.reply_text(message)
-
-
-def cancel_unsub_daily_jam(update, context):
-    user = update.message.from_user
-    logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text(
-        "Subscription skipped, type /unsubscribe if you want to start over."
-    )
-
-    return ConversationHandler.END
-
-
-# Subscription Handler
+# Jam Handler
 ADDJAM, ADDSPECIFICJAM = range(2)
 
 
@@ -504,19 +440,7 @@ def main():
     dispatcher = updater.dispatcher
 
     sub_conv_handler = commands.subscription_conversation_handler()
-
-    unsub_conv_handler = ConversationHandler(
-        entry_points=[
-            CommandHandler("unsubscribedailyjam", get_unsubscribe_email_daily_jam)
-        ],
-        states={
-            UNSUBSCRIBE: [
-                MessageHandler(Filters.text & ~Filters.command, unsubscribedailyjam)
-            ],
-        },
-        fallbacks=[CommandHandler("cancel", cancel_unsub_daily_jam)],
-        conversation_timeout=20.0,
-    )
+    unsub_conv_handler = commands.unsubscription_conversation_handler()
 
     random_jam_handler = ConversationHandler(
         entry_points=[CommandHandler("randomjam", random_jam)],
