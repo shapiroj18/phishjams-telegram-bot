@@ -39,67 +39,6 @@ def setup():
 
 auth_key, app_url, logger, PORT, commands = setup()
 
-# Subscription Handler
-SUBSCRIBE = range(1)
-
-
-def get_subscriber_email_daily_jam(update, context):
-    """Get email from user"""
-    update.message.reply_text(
-        "Please send the email you would like to subscribe to daily random Phish Jams, or send /cancel."
-    )
-
-    return SUBSCRIBE
-
-
-def subscribedailyjam(update, context):
-    """Subscribe for random daily jam emails"""
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    user = update.message.from_user
-    email = update.message.text
-    chat_id = update.message.chat_id
-
-    match = re.search(r"\S+@\S+", email)
-    while match is not None:
-
-        logger.info(
-            "Subscribe email sent by %s: %s",
-            user.first_name + " " + user.last_name,
-            email,
-        )
-        data = {"email": email, "platform": "Telegram", "chat_id": chat_id}
-        r = httpx.post(f"{heroku_flask_url}/subscribedailyjams", data=data)
-        print(f"flask response: {r.json()}")
-        message_resp = r.json()["message"]
-        if "subscribed successfully" in message_resp:
-            message = f"You have successfully subscribed {email}!"
-            update.message.reply_text(message)
-        elif "error" in message_resp:
-            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
-            update.message.reply_text(message)
-
-        return ConversationHandler.END
-
-    else:
-        logger.info(
-            "Subscribe email sent by %s: %s",
-            user.first_name + " " + user.last_name,
-            email,
-        )
-        message = f"Invalid email, please type again below, or send /cancel."
-        update.message.reply_text(message)
-
-
-def cancel_sub_daily_jam(update, context):
-    user = update.message.from_user
-    logger.info("User %s cancelled the conversation.", user.first_name)
-    update.message.reply_text(
-        "Subscription skipped, type /subscribe if you want to start over."
-    )
-
-    return ConversationHandler.END
-
-
 # Unsubscribe Handler
 UNSUBSCRIBE = range(1)
 
@@ -543,28 +482,6 @@ def code(update, context):
     )
 
 
-def support(update, context):
-
-    keyboard = [
-        [
-            InlineKeyboardButton("Ko-Fi", url="https://ko-fi.com/shapiroj18"),
-        ],
-        [
-            InlineKeyboardButton(
-                "GitHub", url="https://github.com/sponsors/shapiroj18"
-            ),
-        ],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="This bot is not cheap to build! If you want to support the development of this project, please consider contributing.",
-        reply_markup=reply_markup,
-    )
-
-
 def unknown(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -582,18 +499,7 @@ def main():
     updater = Updater(auth_key, use_context=True)
     dispatcher = updater.dispatcher
 
-    sub_conv_handler = ConversationHandler(
-        entry_points=[
-            CommandHandler("subscribedailyjam", get_subscriber_email_daily_jam)
-        ],
-        states={
-            SUBSCRIBE: [
-                MessageHandler(Filters.text & ~Filters.command, subscribedailyjam)
-            ]
-        },
-        fallbacks=[CommandHandler("cancel", cancel_sub_daily_jam)],
-        conversation_timeout=20.0,
-    )
+    sub_conv_handler = commands.subscription_conversation_handler()
 
     unsub_conv_handler = ConversationHandler(
         entry_points=[
@@ -644,7 +550,6 @@ def main():
     dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
     dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
     dispatcher.add_handler(CommandHandler("code", code))
-    dispatcher.add_handler(CommandHandler("support", support))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
     dispatcher.add_handler(random_jam_handler)
