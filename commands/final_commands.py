@@ -12,4 +12,12 @@ class FinalCommands:
     # Start message
     def start(self, update, context) -> None:
         message = self.messages.start_message()
-        self.basic_commands.send_basic_mesage(update, context, message)
+        self.basic_commands.send_basic_message(update, context, message)
+        
+    def features(self, update, context) -> None:
+        message = self.messages.features_message()
+        self.basic_commands.send_basic_message(update, context, message)
+        
+    def help(self, update, context) -> None:
+        message = self.messages.help_message()
+        self.basic_commands.send_basic_message(update, context, message)
