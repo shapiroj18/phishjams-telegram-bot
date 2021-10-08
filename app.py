@@ -16,52 +16,28 @@ from telegram.ext import (
 from commands.final_commands import FinalCommands
 
 # load environment variables
-load_dotenv()
-auth_key = os.getenv("TELEGRAM_BOT_TOKEN")
-app_url = os.getenv("APP_URL")
 
-# Enable Logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+def setup():
+    
+    load_dotenv()
+    auth_key = os.getenv("TELEGRAM_BOT_TOKEN")
+    app_url = os.getenv("APP_URL")
 
-PORT = int(os.environ.get("PORT", "8443"))
-logging.info(PORT)
-
-# load commands
-commands = FinalCommands()
-
-def features(update, context):
-    """Features of bot"""
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    features_message = f"""
-    <b>You can send me commands like:</b>
-    /queue (let's you add a random or specific jam to the online player: {heroku_flask_url})
-    /randomjam (sends a random Phish jam)
-    /subscribedailyjam (random daily jam emails)
-    /unsubscribedailyjam (remove daily jam emails)
-    /subscribemjm (reminder when mystery jam monday is posted)
-    /unsubscribemjm (remove MJM reminders)
-    /code (links to code repositories and contributing)
-    /support (information on supporting development)
-    """
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=features_message, parse_mode="HTML"
+    # Enable Logging
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
     )
+    logger = logging.getLogger(__name__)
 
+    PORT = int(os.environ.get("PORT", "8443"))
+    logging.info(PORT)
 
-def help(update, context):
-    """Features of bot"""
-    features_message = """
-    <b>You can send me messages like:</b>
-    /subscribe (random daily jam emails)
-    /unsubscribe (remove daily jam emails)
-    """
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=features_message, parse_mode="HTML"
-    )
+    # load commands
+    commands = FinalCommands()
+    
+    return auth_key, app_url, logger, PORT, commands
 
+auth_key, app_url, logger, PORT, commands = setup()
 
 # Subscription Handler
 SUBSCRIBE = range(1)
@@ -663,10 +639,10 @@ def main():
 
     # define handlers
     dispatcher.add_handler(CommandHandler("start", commands.start))
-    dispatcher.add_handler(CommandHandler("features", features))
+    dispatcher.add_handler(CommandHandler("features", commands.features))
+    dispatcher.add_handler(CommandHandler("help", commands.help))
     dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
     dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
-    dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("code", code))
     dispatcher.add_handler(CommandHandler("support", support))
     dispatcher.add_handler(sub_conv_handler)
