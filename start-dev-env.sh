@@ -15,24 +15,21 @@ fi
 
 # flags (this is useful: https://pretzelhands.com/posts/command-line-flags)
 
-for arg in "$@"
-do
-    case "$arg" in
-        -p|--phish)
-        if [[ $(brew help) ]]; then
+# write ngrok url for webhook to environment variable
+URL=$(curl --silent http://localhost:4040/api/tunnels | jq ".tunnels[].public_url" | grep "https:*" | tr -d '"')
+export APP_URL=$URL/
 
-            if [[ $(brew ls --versions figlet) ]]; then
-                figlet -f bulbhead "phish bot"
-            else
-                echo 'Installing Figlet via Homebrew'
-                brew install figlet
-                figlet -f bulbhead "phish bot"
-            fi
 
-        else
-            echo 'Install Homebrew if you want fun features at brew.sh'
-        fi
-        shift
-        ;;
-    esac
-done
+if [[ $(brew help) ]]; then
+
+    if [[ $(brew ls --versions figlet) ]]; then
+        figlet -f bulbhead "phish bot"
+    else
+        echo 'Installing Figlet via Homebrew'
+        brew install figlet
+        figlet -f bulbhead "phish bot"
+    fi
+
+else
+    echo 'Install Homebrew if you want fun features at brew.sh'
+fi
