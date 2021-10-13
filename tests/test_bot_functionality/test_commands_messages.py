@@ -1,5 +1,8 @@
 import os
+from dotenv import load_dotenv
 from commands.bot_functionality.messages import Messages
+
+load_dotenv()
 
 messages = Messages()
 

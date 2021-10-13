@@ -23,7 +23,7 @@ class FinalCommands:
         message = self.messages.help_message()
         self.basic_commands.send_basic_message(update, context, message)
 
-    def subscription_conversation_handler(self) -> ConversationHandler:
+    def subscription_conversation_handler(self):
         sub_conversation_handler = self.basic_commands.create_conversation_handler(
             entry_points=[
                 CommandHandler(
@@ -43,7 +43,7 @@ class FinalCommands:
 
         return sub_conversation_handler
 
-    def unsubscription_conversation_handler(self) -> ConversationHandler:
+    def unsubscription_conversation_handler(self):
         unsub_conversation_handler = self.basic_commands.create_conversation_handler(
             entry_points=[
                 CommandHandler(
@@ -52,10 +52,13 @@ class FinalCommands:
             ],
             states={
                 self.messages.UNSUBSCRIBE: [
-                    MessageHandler(Filters.text & ~Filters.command, self.messages.unsubscribe_daily_jam)
+                    MessageHandler(
+                        Filters.text & ~Filters.command,
+                        self.messages.unsubscribe_daily_jam,
+                    )
                 ]
             },
             fallbacks=[CommandHandler("cancel", self.messages.cancel_sub_daily_jam)],
         )
-        
+
         return unsub_conversation_handler

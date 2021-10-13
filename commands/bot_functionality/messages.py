@@ -15,6 +15,7 @@ class Messages:
         self.logger = logging.getLogger(__name__)
         self.api_requests = APIRequests()
         self.regex = Regex()
+        self.heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
 
     # Start message
     def start_message(self) -> str:
@@ -28,10 +29,9 @@ class Messages:
     # features message
     def features_message(self):
         """Features of bot"""
-        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
         message = f"""
         You can send me commands like:
-        /queue (let's you add a random or specific jam to the online player: {heroku_flask_url})
+        /queue (let's you add a random or specific jam to the online player: {self.heroku_flask_url})
         /randomjam (sends a random Phish jam)
         /subscribedailyjam (random daily jam emails)
         /unsubscribedailyjam (remove daily jam emails)
@@ -63,7 +63,6 @@ class Messages:
 
     def subscribe_daily_jam(self, update, context):
         """Subscribe for random daily jam emails"""
-        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
         user = update.message.from_user
         email = update.message.text
         chat_id = update.message.chat_id
@@ -78,7 +77,7 @@ class Messages:
             )
 
             message_response = self.api_requests.post_subscribe_daily_jams(
-                heroku_flask_url, email, chat_id
+                self.heroku_flask_url, email, chat_id
             )
 
             if "subscribed successfully" in message_response:
@@ -110,8 +109,7 @@ class Messages:
 
     # unsubscribe to daily jam cancel_functions
     UNSUBSCRIBE = range(1)
-    
-    
+
     def get_unsubscribe_email_daily_jam(self, update, context):
         """Get email from user"""
         update.message.reply_text(
@@ -119,11 +117,10 @@ class Messages:
         )
 
         return self.UNSUBSCRIBE
-    
+
     def unsubscribe_daily_jam(self, update, context):
 
         """Subscribe for random daily jam emails"""
-        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
         user = update.message.from_user
         email = update.message.text
 
@@ -136,9 +133,9 @@ class Messages:
                 email,
             )
             message_response = self.api_requests.post_unsubscribe_daily_jams(
-                heroku_flask_url, email
+                self.heroku_flask_url, email
             )
-            
+
             if "removed successfully" in message_response:
                 message = f"You have successfully unsubscribed {email}. If you would like to resubscribe, send /subscribedailyjam."
                 update.message.reply_text(message)
@@ -159,3 +156,32 @@ class Messages:
             )
             message = f"Invalid email, please type again below, or send /cancel."
             update.message.reply_text(message)
+
+    # Jam Handler
+    ADDJAM, ADDSPECIFICJAM = range(2)
+
+    def add_queue_jam(self, update, context):
+        """Get random or specific jam data from user"""
+
+        chat_id = update.message.chat_id
+        data = {
+            "chat_id": chat_id,
+        }
+        r = httpx.post(f"{self.heroku_flask_url}/checkqueuestatus", data=data)
+        print(r.json())
+
+        if r.json()["response"] == "Maximums not hit":
+
+            reply_keyboard = [["Random"], ["I had a specific one in mind"]]
+            update.message.reply_text(
+                f"Did you want to add a specific or random jam to the playlist?",
+                reply_markup=ReplyKeyboardMarkup(
+                    reply_keyboard, one_time_keyboard=True
+                ),
+            )
+
+            return ADDJAM
+
+        else:
+            update.message.reply_text(r.json()["response"])
+            return ConversationHandler.END
