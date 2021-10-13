@@ -173,58 +173,6 @@ def cancel_queue_jam(update, context):
 
     return ConversationHandler.END
 
-
-# subscribe to MJM
-def subscribemjm(update, context):
-    """Subscribe for mjm notifications"""
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    user = update.message.from_user
-    chat_id = update.message.chat_id
-
-    logger.info(
-        "MJM subscription sent by %s",
-        user.first_name + " " + user.last_name,
-    )
-
-    data = {"platform": "Telegram", "chat_id": chat_id}
-    r = httpx.post(f"{heroku_flask_url}/subscribemjm", data=data)
-    print(f"flask response: {r.json()}")
-    message_resp = r.json()["message"]
-    if "subscribed successfully" in message_resp:
-        message = f"You have successfully subscribed to MJM reminders!"
-        update.message.reply_text(message)
-    elif "error" in message_resp:
-        message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
-        update.message.reply_text(message)
-
-
-# unsubscribe to MJM
-def unsubscribemjm(update, context):
-    """Subscribe for mjm notifications"""
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-    user = update.message.from_user
-    chat_id = update.message.chat_id
-
-    logger.info(
-        "MJM unsubscription sent by %s",
-        user.first_name + " " + user.last_name,
-    )
-
-    data = {"chat_id": chat_id}
-    r = httpx.post(f"{heroku_flask_url}/unsubscribemjm", data=data)
-    print(f"flask response: {r.json()}")
-    message_resp = r.json()["message"]
-    if "removed successfully" in message_resp:
-        message = f"You have successfully unsubscribed from MJM reminders. If you would like to resubscribe, send /subscribemjm. "
-        update.message.reply_text(message)
-    elif "did not exist" in message_resp:
-        message = f"You were not found in the database."
-        update.message.reply_text(message)
-    elif "error" in message_resp:
-        message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
-        update.message.reply_text(message)
-
-
 # Random Jam Handler
 RANDOMJAM, TRUE_RANDOM, YEAR_RANDOM, SONG_RANDOM, YEARSONG_RANDOM = range(5)
 
@@ -455,8 +403,8 @@ def main():
     dispatcher.add_handler(CommandHandler("start", commands.start))
     dispatcher.add_handler(CommandHandler("features", commands.features))
     dispatcher.add_handler(CommandHandler("help", commands.help))
-    # dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
-    # dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
+    dispatcher.add_handler(CommandHandler("subscribemjm", commands.subscribe_mystery_jam_monday_notifications))
+    dispatcher.add_handler(CommandHandler("unsubscribemjm", commands.unsubscribe_mystery_jam_monday_notifications))
     dispatcher.add_handler(CommandHandler("code", commands.code))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)

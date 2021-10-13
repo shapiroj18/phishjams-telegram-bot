@@ -59,7 +59,53 @@ class Messages:
         """Message to send with information of codebase for this project"""
         message = f"You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!"
         return message
+    
+    # subscribe to mystery jam monday notifications
+    def subscribemjm(self, update, context):
+        """Subscribe for mjm notifications"""
+        user = update.message.from_user
+        chat_id = update.message.chat_id
 
+        self.logger.info(
+            "MJM subscription sent by %s",
+            user.first_name + " " + user.last_name,
+        )
+        
+        message_response = self.api_requests.post_subscribe_mjm(
+            self.heroku_flask_url, chat_id
+        )
+
+        if "subscribed successfully" in message_response:
+            message = f"You have successfully subscribed to MJM reminders!"
+            update.message.reply_text(message)
+        elif "error" in message_response:
+            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+            update.message.reply_text(message)
+            
+    # unsubscribe to mystery jam monday notifications
+    def unsubscribemjm(self, update, context):
+        """Subscribe for mjm notifications"""
+        user = update.message.from_user
+        chat_id = update.message.chat_id
+
+        self.logger.info(
+            "MJM unsubscription sent by %s",
+            user.first_name + " " + user.last_name,
+        )
+
+        message_response = self.api_requests.post_unsubscribe_mjm(
+            self.heroku_flask_url, chat_id
+        )
+        if "removed successfully" in message_response:
+            message = f"You have successfully unsubscribed from MJM reminders. If you would like to resubscribe, send /subscribemjm. "
+            update.message.reply_text(message)
+        elif "did not exist" in message_response:
+            message = f"You were not found in the database."
+            update.message.reply_text(message)
+        elif "error" in message_response:
+            message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
+            update.message.reply_text(message)
+            
     # subscribe to daily jam cancel_functions
     SUBSCRIBE = range(1)
 
@@ -166,30 +212,3 @@ class Messages:
             )
             message = f"Invalid email, please type again below, or send /cancel."
             update.message.reply_text(message)
-
-    # Jam Handler
-    ADDJAM, ADDSPECIFICJAM = range(2)
-
-    def add_queue_jam(self, update, context):
-        """Get random or specific jam data from user"""
-
-        chat_id = update.message.chat_id
-        message_response = self.api_requests.post_check_queue_status(
-            self.heroku_flask_url, chat_id
-        )
-
-        if message_response == "Maximums not hit":
-
-            reply_keyboard = [["Random"], ["I had a specific one in mind"]]
-            update.message.reply_text(
-                f"Did you want to add a specific or random jam to the playlist?",
-                reply_markup=ReplyKeyboardMarkup(
-                    reply_keyboard, one_time_keyboard=True
-                ),
-            )
-
-            return ADDJAM
-
-        else:
-            update.message.reply_text(message_response)
-            return ConversationHandler.END
