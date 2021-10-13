@@ -10,7 +10,10 @@ class BaseCommands:
         self, update: Update, context: CallbackContext, message: str, reply_markup=None
     ) -> None:
         context.bot.send_message(
-            chat_id=update.effective_chat.id, text=message, parse_mode="Markdown", reply_markup=reply_markup,
+            chat_id=update.effective_chat.id,
+            text=message,
+            parse_mode="Markdown",
+            reply_markup=reply_markup,
         )
 
     def create_inline_keyboard(self, buttons: list, urls: list):
@@ -21,11 +24,11 @@ class BaseCommands:
             keyboard = []
             for i in range(len(buttons)):
                 keyboard.append([InlineKeyboardButton(buttons[i], url=urls[i])])
-                
+
             reply_markup = InlineKeyboardMarkup(keyboard)
-                
+
             return reply_markup
-            
+
     def create_conversation_handler(
         self,
         entry_points: list,

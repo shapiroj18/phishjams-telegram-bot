@@ -173,6 +173,7 @@ def cancel_queue_jam(update, context):
 
     return ConversationHandler.END
 
+
 # Random Jam Handler
 RANDOMJAM, TRUE_RANDOM, YEAR_RANDOM, SONG_RANDOM, YEARSONG_RANDOM = range(5)
 
@@ -403,8 +404,16 @@ def main():
     dispatcher.add_handler(CommandHandler("start", commands.start))
     dispatcher.add_handler(CommandHandler("features", commands.features))
     dispatcher.add_handler(CommandHandler("help", commands.help))
-    dispatcher.add_handler(CommandHandler("subscribemjm", commands.subscribe_mystery_jam_monday_notifications))
-    dispatcher.add_handler(CommandHandler("unsubscribemjm", commands.unsubscribe_mystery_jam_monday_notifications))
+    dispatcher.add_handler(
+        CommandHandler(
+            "subscribemjm", commands.subscribe_mystery_jam_monday_notifications
+        )
+    )
+    dispatcher.add_handler(
+        CommandHandler(
+            "unsubscribemjm", commands.unsubscribe_mystery_jam_monday_notifications
+        )
+    )
     dispatcher.add_handler(CommandHandler("code", commands.code))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)

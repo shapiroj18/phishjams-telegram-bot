@@ -27,11 +27,13 @@ class FinalCommands:
         buttons, urls = self.messages.code_keyboard()
         keyboard = self.base_commands.create_inline_keyboard(buttons, urls)
         message = self.messages.code_message()
-        self.base_commands.send_basic_message(update, context, message, reply_markup=keyboard)
-    
+        self.base_commands.send_basic_message(
+            update, context, message, reply_markup=keyboard
+        )
+
     def subscribe_mystery_jam_monday_notifications(self, update, context) -> None:
         self.messages.subscribemjm(update, context)
-        
+
     def unsubscribe_mystery_jam_monday_notifications(self, update, context) -> None:
         self.messages.unsubscribemjm(update, context)
 

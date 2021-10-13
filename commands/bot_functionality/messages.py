@@ -51,15 +51,18 @@ class Messages:
     def code_keyboard(self):
         """Shows information for codebase of this project"""
         buttons = ["Telegram Bot", "Web App"]
-        urls = ["https://github.com/shapiroj18/phish-telegram-bot", "https://github.com/shapiroj18/phish-bot"]
+        urls = [
+            "https://github.com/shapiroj18/phish-telegram-bot",
+            "https://github.com/shapiroj18/phish-bot",
+        ]
 
         return buttons, urls
-    
+
     def code_message(self):
         """Message to send with information of codebase for this project"""
         message = f"You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!"
         return message
-    
+
     # subscribe to mystery jam monday notifications
     def subscribemjm(self, update, context):
         """Subscribe for mjm notifications"""
@@ -70,7 +73,7 @@ class Messages:
             "MJM subscription sent by %s",
             user.first_name + " " + user.last_name,
         )
-        
+
         message_response = self.api_requests.post_subscribe_mjm(
             self.heroku_flask_url, chat_id
         )
@@ -81,7 +84,7 @@ class Messages:
         elif "error" in message_response:
             message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
             update.message.reply_text(message)
-            
+
     # unsubscribe to mystery jam monday notifications
     def unsubscribemjm(self, update, context):
         """Subscribe for mjm notifications"""
@@ -105,7 +108,7 @@ class Messages:
         elif "error" in message_response:
             message = f"There was an error. Please try again later or reach out to shapiroj18@gmail.com to report a bug."
             update.message.reply_text(message)
-            
+
     # subscribe to daily jam cancel_functions
     SUBSCRIBE = range(1)
 

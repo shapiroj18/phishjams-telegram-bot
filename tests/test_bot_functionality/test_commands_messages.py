@@ -30,15 +30,27 @@ def test_features_message():
         /help (help menu)
         """
     )
-    
+
+
 def test_help_message():
     assert messages.help_message() == f"""Type /features for full bot commands."""
-    
+
+
 def test_code_keyboard():
-    assert messages.code_keyboard() == (["Telegram Bot", "Web App"], ["https://github.com/shapiroj18/phish-telegram-bot", "https://github.com/shapiroj18/phish-bot"])
-    
+    assert messages.code_keyboard() == (
+        ["Telegram Bot", "Web App"],
+        [
+            "https://github.com/shapiroj18/phish-telegram-bot",
+            "https://github.com/shapiroj18/phish-bot",
+        ],
+    )
+
+
 def test_code_message():
-    assert messages.code_message() == f"You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!"
+    assert (
+        messages.code_message()
+        == f"You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!"
+    )
 
 
 def test_help_message():
