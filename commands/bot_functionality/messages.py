@@ -2,6 +2,7 @@ import os
 import re
 import logging
 
+from telegram import ReplyKeyboardMarkup
 from telegram.ext import (
     ConversationHandler,
 )
@@ -23,7 +24,6 @@ class Messages:
         message = (
             f"""\U0001F420 Welcome to the Phish Bot! Send /features for bot commands!"""
         )
-
         return message
 
     # features message
@@ -40,14 +40,24 @@ class Messages:
         /code (links to code repositories and contributing)
         /help (help menu)
         """
-
         return message
 
     # help message
     def help_message(self):
         """Features of bot"""
         message = f"""Type /features for full bot commands."""
+        return message
 
+    def code_keyboard(self):
+        """Shows information for codebase of this project"""
+        buttons = ["Telegram Bot", "Web App"]
+        urls = ["https://github.com/shapiroj18/phish-telegram-bot", "https://github.com/shapiroj18/phish-bot"]
+
+        return buttons, urls
+    
+    def code_message(self):
+        """Message to send with information of codebase for this project"""
+        message = f"You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!"
         return message
 
     # subscribe to daily jam cancel_functions
@@ -164,13 +174,11 @@ class Messages:
         """Get random or specific jam data from user"""
 
         chat_id = update.message.chat_id
-        data = {
-            "chat_id": chat_id,
-        }
-        r = httpx.post(f"{self.heroku_flask_url}/checkqueuestatus", data=data)
-        print(r.json())
+        message_response = self.api_requests.post_check_queue_status(
+            self.heroku_flask_url, chat_id
+        )
 
-        if r.json()["response"] == "Maximums not hit":
+        if message_response == "Maximums not hit":
 
             reply_keyboard = [["Random"], ["I had a specific one in mind"]]
             update.message.reply_text(
@@ -183,5 +191,5 @@ class Messages:
             return ADDJAM
 
         else:
-            update.message.reply_text(r.json()["response"])
+            update.message.reply_text(message_response)
             return ConversationHandler.END

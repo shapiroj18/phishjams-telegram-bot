@@ -398,30 +398,6 @@ def cancel_random_jam(update, context):
     return ConversationHandler.END
 
 
-def code(update, context):
-
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                "Telegram Bot", url="https://github.com/shapiroj18/phish-telegram-bot"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                "Web Application", url="https://github.com/shapiroj18/phish-bot"
-            ),
-        ],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="You can find the source code for this project below. If you want to contribute, please reach out to shapiroj18@gmail.com!",
-        reply_markup=reply_markup,
-    )
-
-
 def unknown(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -479,13 +455,13 @@ def main():
     dispatcher.add_handler(CommandHandler("start", commands.start))
     dispatcher.add_handler(CommandHandler("features", commands.features))
     dispatcher.add_handler(CommandHandler("help", commands.help))
-    dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
-    dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
-    dispatcher.add_handler(CommandHandler("code", code))
+    # dispatcher.add_handler(CommandHandler("subscribemjm", subscribemjm))
+    # dispatcher.add_handler(CommandHandler("unsubscribemjm", unsubscribemjm))
+    dispatcher.add_handler(CommandHandler("code", commands.code))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
-    dispatcher.add_handler(random_jam_handler)
-    dispatcher.add_handler(queue_jam_handler)
+    # dispatcher.add_handler(random_jam_handler)
+    # dispatcher.add_handler(queue_jam_handler)
 
     # non-understood commands
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))

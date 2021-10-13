@@ -7,24 +7,30 @@ from commands.bot_functionality.messages import Messages
 class FinalCommands:
     def __init__(self) -> None:
         # load libraries
-        self.basic_commands = BaseCommands()
+        self.base_commands = BaseCommands()
         self.messages = Messages()
 
     # Start message
     def start(self, update, context) -> None:
         message = self.messages.start_message()
-        self.basic_commands.send_basic_message(update, context, message)
+        self.base_commands.send_basic_message(update, context, message)
 
     def features(self, update, context) -> None:
         message = self.messages.features_message()
-        self.basic_commands.send_basic_message(update, context, message)
+        self.base_commands.send_basic_message(update, context, message)
 
     def help(self, update, context) -> None:
         message = self.messages.help_message()
-        self.basic_commands.send_basic_message(update, context, message)
+        self.base_commands.send_basic_message(update, context, message)
+
+    def code(self, update, context) -> None:
+        buttons, urls = self.messages.code_keyboard()
+        keyboard = self.base_commands.create_inline_keyboard(buttons, urls)
+        message = self.messages.code_message()
+        self.base_commands.send_basic_message(update, context, message, reply_markup=keyboard)
 
     def subscription_conversation_handler(self):
-        sub_conversation_handler = self.basic_commands.create_conversation_handler(
+        sub_conversation_handler = self.base_commands.create_conversation_handler(
             entry_points=[
                 CommandHandler(
                     "subscribedailyjam", self.messages.get_subscriber_email_daily_jam
@@ -44,7 +50,7 @@ class FinalCommands:
         return sub_conversation_handler
 
     def unsubscription_conversation_handler(self):
-        unsub_conversation_handler = self.basic_commands.create_conversation_handler(
+        unsub_conversation_handler = self.base_commands.create_conversation_handler(
             entry_points=[
                 CommandHandler(
                     "unsubscribedailyjam", self.messages.get_unsubscribe_email_daily_jam
