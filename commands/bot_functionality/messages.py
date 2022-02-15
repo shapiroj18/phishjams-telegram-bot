@@ -376,3 +376,137 @@ class Messages:
         )
 
         return ConversationHandler.END
+    
+    # Queue Jam Handler
+    ADDJAM, ADDSPECIFICJAM = range(2)
+    
+    def add_queue_jam(self, update, context):
+        """Get random or specific jam data from user"""
+
+        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+        chat_id = update.message.chat_id
+        data = {
+            "chat_id": chat_id,
+        }
+        r = httpx.post(f"{heroku_flask_url}/checkqueuestatus", data=data)
+        print(r.json())
+
+        if r.json()["response"] == "Maximums not hit":
+
+            reply_keyboard = [["Random"], ["I had a specific one in mind"]]
+            update.message.reply_text(
+                f"Did you want to add a specific or random jam to the playlist?",
+                reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+            )
+
+            return self.ADDJAM
+
+        else:
+            update.message.reply_text(r.json()["response"])
+            return ConversationHandler.END
+        
+    def queue_jam(self, update, context):
+        """Get random or specific jam and add to playlist"""
+        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+
+        if update.message.text.lower() == "random":
+            while True:
+                user = update.message.from_user.first_name
+                chat_id = update.message.chat_id
+                data = {
+                    "platform": "Telegram",
+                    "chat_id": chat_id,
+                    "user_first_name": user,
+                }
+                r = httpx.post(f"{heroku_flask_url}/addtoqueue", data=data)
+                self.logger.info(r.json())
+                if r.json()['response'] == 'No jams found for that song. Please try again!':
+                    update.message.reply_text(
+                    f"Random jam not found - try again!",
+                )
+                    return ConversationHandler.END
+                if r.json()["jam_url"]:
+                    break
+
+            song = r.json()["song"]
+            date = r.json()["date"]
+            self.logger.info("User %s has added %s %s.", user, song, date)
+            update.message.reply_text(
+                f"{song} from {date} has been added! Please find the playlist at {heroku_flask_url}",
+            )
+
+            return ConversationHandler.END
+
+        else:
+            update.message.reply_text(
+                "Please enter the jam you would like to add.\nFor example: 2000-06-14 Twist"
+            )
+
+            return self.ADDSPECIFICJAM
+        
+    def queue_specific_jam(self, update, context):
+        """Adds specific jam if user inputs correctly. Otherwise, ends conversation."""
+        response = update.message.text
+        user = update.message.from_user
+        chat_id = update.message.chat_id
+        jam_date = response.split()[0]
+        match_jam_date = re.search(r"\d\d\d\d-\d\d-\d\d", jam_date)
+        song_list = response.split()[1:]
+        song = " ".join(song_list)
+        heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
+
+        while match_jam_date is not None:
+            self.logger.info(
+                "Jam sent by %s: %s",
+                user.first_name + " " + user.last_name,
+                jam_date + " " + song,
+            )
+
+            data = {
+                "platform": "Telegram",
+                "chat_id": chat_id,
+                "user_first_name": user.first_name,
+                "song": song,
+                "jam_date": jam_date,
+            }
+            r = httpx.post(f"{heroku_flask_url}/addtoqueue", data=data)
+            json_resp = r.json()
+
+            if "response" in json_resp:
+                update.message.reply_text(json_resp["response"])
+
+                return self.ADDSPECIFICJAM
+
+            else:
+                self.logger.info(
+                    "User %s has added %s %s.",
+                    user.first_name + " " + user.last_name,
+                    song,
+                    jam_date,
+                )
+                update.message.reply_text(
+                    f"{jam_date} {song} has been added! Please find the playlist at {heroku_flask_url}",
+                )
+
+                return ConversationHandler.END
+
+        else:
+            self.logger.info(
+                "Jam sent by %s: %s",
+                user.first_name + " " + user.last_name,
+                jam_date + " " + song,
+            )
+            message = (
+                f'Invalid format, please type again as "YYYY-MM-DD song" , or send /cancel.'
+            )
+            update.message.reply_text(message)
+
+
+    def cancel_queue_jam(self, update, context):
+        user = update.message.from_user
+        self.logger.info("User %s canceled the conversation.", user.first_name)
+        update.message.reply_text(
+            "Skipped adding a song to the queue, type /queue if you want to start over."
+        )
+
+        return ConversationHandler.END

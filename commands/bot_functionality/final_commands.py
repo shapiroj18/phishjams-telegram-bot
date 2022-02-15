@@ -103,3 +103,25 @@ class FinalCommands:
         )
 
         return random_jam_handler
+    
+    def queue_jam_handler(self):
+        
+        random_jam_handler = self.base_commands.create_conversation_handler(
+            entry_points=[
+                CommandHandler(
+                    "queue", self.messages.add_queue_jam
+                )
+            ],
+            states={
+                self.messages.ADDJAM: [
+                    MessageHandler(
+                        Filters.text & ~Filters.command, self.messages.queue_jam
+                    )
+                ],
+                self.messages.ADDSPECIFICJAM: [MessageHandler(Filters.text & ~Filters.command, self.messages.queue_specific_jam)],
+            },
+            fallbacks=[CommandHandler("cancel", self.messages.cancel_queue_jam)],
+            conversation_timeout=60.0,
+        )
+
+        return random_jam_handler
