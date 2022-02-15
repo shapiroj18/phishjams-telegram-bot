@@ -23,13 +23,14 @@ def test_post_subscribe_daily_jams_success(heroku_flask_url):
     assert response == f"{test_email} subscribed successfully"
 
 
-def test_post_subscribe_daily_jams_error_jsondecodeerror(heroku_flask_url):
-    with pytest.raises(json.decoder.JSONDecodeError):
-        test_email = ""
-        test_chat_id = "test_chat_id"
-        response = api_requests.post_subscribe_daily_jams(
-            heroku_flask_url, test_email, test_chat_id
-        )
+def test_post_subscribe_daily_jams_error_noemailprovided(heroku_flask_url):
+    test_email = ""
+    test_chat_id = "test_chat_id"
+    response = api_requests.post_subscribe_daily_jams(
+        heroku_flask_url, test_email, test_chat_id
+    )
+    
+    assert response == 'No email provided'
 
 
 def test_post_subscribe_daily_jams_error_unsupportedprotocol():
@@ -71,9 +72,9 @@ def test_post_subscribe_mjm(heroku_flask_url):
 
 
 def test_post_subscribe_mjm_error(heroku_flask_url):
-    with pytest.raises(json.decoder.JSONDecodeError):
-        test_chat_id = "test_chat_id"
-        api_requests.post_subscribe_mjm(heroku_flask_url, test_chat_id)
+    test_chat_id = ""
+    resp = api_requests.post_subscribe_mjm(heroku_flask_url, test_chat_id)
+    assert resp == 'No chat id provided'
 
 
 def test_post_unsubscribe_mjm(heroku_flask_url):
@@ -84,11 +85,5 @@ def test_post_unsubscribe_mjm(heroku_flask_url):
 
 def test_post_unsubscribe_mjm(heroku_flask_url):
     test_chat_id = 123
-    resp = api_requests.post_subscribe_mjm(heroku_flask_url, test_chat_id)
+    resp = api_requests.post_unsubscribe_mjm(heroku_flask_url, test_chat_id)
     assert resp == "123 did not exist in the database"
-
-
-def test_post_unsubscribe_mjm(heroku_flask_url):
-    test_chat_id = 123320840293842
-    with pytest.raises(json.decoder.JSONDecodeError):
-        resp = api_requests.post_subscribe_mjm(heroku_flask_url, test_chat_id)
