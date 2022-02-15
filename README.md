@@ -26,6 +26,9 @@ The environmental variables stored are:
 2. BOT_USERNAME=`username` (username for `@gone_phishing_bot` from BotFather)
 3. URL=`url` (url of heroku app)
 
+Notes:
+* Sometimes starting the service is a bit buggy locally (not returning any output once bot has been started). I went through and checked that the url from `ngrok` was outputting correctly with printing it out in the `start-dev-env.sh` and the `app.py`, and once I made it print on the `app.py` it worked.
+
 Ideas:
 1. Phish Trivia Game
 2. Next Phish Show (location/date)
