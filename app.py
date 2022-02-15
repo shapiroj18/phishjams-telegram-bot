@@ -173,186 +173,11 @@ def cancel_queue_jam(update, context):
 
     return ConversationHandler.END
 
-
-# Random Jam Handler
-RANDOMJAM, TRUE_RANDOM, YEAR_RANDOM, SONG_RANDOM, YEARSONG_RANDOM = range(5)
-
-
-def random_jam(update, context):
-    """Get random jam by year or song name"""
-
-    reply_keyboard = [["Random"], ["Year"], ["Song"], ["Year and Song"]]
-    update.message.reply_text(
-        f"Do you want a truly random jam, or a jam by year and/or song?",
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
-    )
-
-    return RANDOMJAM
-
-
-def get_random_jam_keyboard(song=None, year=None):
-    heroku_flask_url = os.getenv("HEROKU_FLASK_URL")
-
-    data = {"song": song, "year": year}
-    print(data)
-
-    r = httpx.post(f"{heroku_flask_url}/randomjam", data=data)
-    print(r.json())
-    json_resp = r.json()
-
-    if "response" in json_resp:
-        return json_resp["response"], None
-    else:
-        relisten_formatted_date = datetime.datetime.strptime(
-            json_resp["date"], "%Y-%m-%d"
-        ).strftime("%Y/%m/%d")
-
-        if json_resp["jam_url"]:
-            jam_url = json_resp["jam_url"]
-        else:
-            jam_url = f"https://phish.in/{json_resp['date']}"
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Jam Link", url=jam_url),
-            ],
-            [
-                InlineKeyboardButton(
-                    "Show Link (Phish.in)", url=f"https://phish.in/{json_resp['date']}"
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    "Show Link (Relisten)",
-                    url=f"https://relisten.net/phish/{relisten_formatted_date}",
-                ),
-            ],
-            [
-                InlineKeyboardButton("Show Info", url=json_resp["show_info"]),
-            ],
-        ]
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        return json_resp, reply_markup
-
-
-def random_jam_response(update, context):
-    """Gets random jam for user."""
-    response = update.message.text
-    user = update.message.from_user
-    chat_id = update.message.chat_id
-
-    if response.lower() == "random":
-        json_resp, reply_markup = get_random_jam_keyboard()
-        update.message.reply_text(
-            f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
-            reply_markup=reply_markup,
-        )
-        return ConversationHandler.END
-    elif response.lower() == "year":
-        update.message.reply_text("Which year?")
-        return YEAR_RANDOM
-    elif response.lower() == "song":
-        update.message.reply_text("Which song?")
-        return SONG_RANDOM
-    elif response.lower() == "year and song":
-        update.message.reply_text(
-            "Which year and song (make sure you specify the year and then the song (e.g. 2003 Scents and Subtle Sounds)?"
-        )
-        return YEARSONG_RANDOM
-    else:
-        update.message.reply_text(
-            "Something went wrong, please try again by typing /randomjam."
-        )
-        return ConversationHandler.END
-
-
-def true_random(update, context):
-    response = update.message.text
-    json_resp, reply_markup = get_random_jam_keyboard()
-    update.message.reply_text(
-        f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
-        reply_markup=reply_markup,
-    )
-    return ConversationHandler.END
-
-
-def year_random(update, context):
-    response = update.message.text
-    year = response
-    match_year = re.search("^\d{4}$", year)
-    while match_year is not None:
-
-        json_resp, reply_markup = get_random_jam_keyboard(year=year)
-        if "resp" in json_resp:
-            update.message.reply_text(
-                "Not a valid year. Please try again with /randomjam and a valid year (usually 1983 to current year)",
-            )
-            return ConversationHandler.END
-        else:
-            update.message.reply_text(
-                f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
-                reply_markup=reply_markup,
-            )
-            return ConversationHandler.END
-
-    else:
-        update.message.reply_text(
-            "Incorrect format. Make sure you correctly use a four digit year."
-        )
-
-
-def song_random(update, context):
-    response = update.message.text
-    song = response
-    json_resp, reply_markup = get_random_jam_keyboard(song=song)
-    update.message.reply_text(
-        f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
-        reply_markup=reply_markup,
-    )
-    return ConversationHandler.END
-
-
-def yearsong_random(update, context):
-    response = update.message.text
-    match_year_song = re.search(r"^\d{4}\s.*$", response)
-    while match_year_song is not None:
-
-        year = response.split()[0]
-        song_list = response.split()[1:]
-        song = " ".join(song_list)
-        print(year, song)
-
-        json_resp, reply_markup = get_random_jam_keyboard(song=song, year=year)
-        update.message.reply_text(
-            f"Random Jam:\n{json_resp['song']} {json_resp['date']}",
-            reply_markup=reply_markup,
-        )
-        return ConversationHandler.END
-
-    else:
-        update.message.reply_text(
-            "Incorrect format. Make sure you specify the year and then the song (e.g. 2003 Scents and Subtle Sounds)."
-        )
-
-
-def cancel_random_jam(update, context):
-    user = update.message.from_user
-    logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text(
-        "Skipped getting random jam, type /randomjam if you want to start over."
-    )
-
-    return ConversationHandler.END
-
-
 def unknown(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="Command not recognized. Send /cancel to exit a process or /features for possible commands.",
     )
-
 
 def error(update, context):
     """Log errors caused by updates"""
@@ -366,27 +191,7 @@ def main():
 
     sub_conv_handler = commands.subscription_conversation_handler()
     unsub_conv_handler = commands.unsubscription_conversation_handler()
-
-    random_jam_handler = ConversationHandler(
-        entry_points=[CommandHandler("randomjam", random_jam)],
-        states={
-            RANDOMJAM: [
-                MessageHandler(
-                    Filters.regex("^Random|Year|Song|Year and Song$")
-                    & ~Filters.command,
-                    random_jam_response,
-                )
-            ],
-            # TRUE_RANDOM: [MessageHandler(Filters.regex('^Random$') & ~Filters.command, true_random)],
-            YEAR_RANDOM: [MessageHandler(Filters.text & ~Filters.command, year_random)],
-            SONG_RANDOM: [MessageHandler(Filters.text & ~Filters.command, song_random)],
-            YEARSONG_RANDOM: [
-                MessageHandler(Filters.text & ~Filters.command, yearsong_random)
-            ],
-        },
-        fallbacks=[CommandHandler("cancel", cancel_random_jam)],
-        conversation_timeout=60.0,
-    )
+    random_jam_handler = commands.random_jam_handler()
 
     queue_jam_handler = ConversationHandler(
         entry_points=[CommandHandler("queue", add_queue_jam)],
@@ -417,7 +222,7 @@ def main():
     dispatcher.add_handler(CommandHandler("code", commands.code))
     dispatcher.add_handler(sub_conv_handler)
     dispatcher.add_handler(unsub_conv_handler)
-    # dispatcher.add_handler(random_jam_handler)
+    dispatcher.add_handler(random_jam_handler)
     # dispatcher.add_handler(queue_jam_handler)
 
     # non-understood commands

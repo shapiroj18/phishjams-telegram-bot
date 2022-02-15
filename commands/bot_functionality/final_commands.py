@@ -76,3 +76,30 @@ class FinalCommands:
         )
 
         return unsub_conversation_handler
+
+    def random_jam_handler(self):
+        
+        random_jam_handler = self.base_commands.create_conversation_handler(
+            entry_points=[
+                CommandHandler(
+                    "randomjam", self.messages.random_jam
+                )
+            ],
+            states={
+                self.messages.RANDOMJAM: [
+                    MessageHandler(
+                        Filters.regex("^Random|Year|Song|Year and Song$") & ~Filters.command,
+                        self.messages.random_jam_response,
+                    )
+                ],
+                self.messages.YEAR_RANDOM: [MessageHandler(Filters.text & ~Filters.command, self.messages.year_random)],
+                self.messages.SONG_RANDOM: [MessageHandler(Filters.text & ~Filters.command, self.messages.song_random)],
+                self.messages.YEARSONG_RANDOM: [
+                    MessageHandler(Filters.text & ~Filters.command, self.messages.yearsong_random)
+                ],
+            },
+            fallbacks=[CommandHandler("cancel", self.messages.cancel_random_jam)],
+            conversation_timeout=60.0,
+        )
+
+        return random_jam_handler
