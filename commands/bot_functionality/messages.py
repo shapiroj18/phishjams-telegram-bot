@@ -420,7 +420,7 @@ class Messages:
                 }
                 r = httpx.post(f"{heroku_flask_url}/addtoqueue", data=data)
                 self.logger.info(r.json())
-                if r.json()['response'] == 'No jams found for that song. Please try again!':
+                if not r.json()["jam_url"]:
                     update.message.reply_text(
                     f"Random jam not found - try again!",
                 )
