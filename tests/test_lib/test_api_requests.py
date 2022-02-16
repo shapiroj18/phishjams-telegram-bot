@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 from dotenv import load_dotenv
-from commands.lib.api_requests import APIRequests
+from commands.utils.api_requests import APIRequests
 
 api_requests = APIRequests()
 load_dotenv()

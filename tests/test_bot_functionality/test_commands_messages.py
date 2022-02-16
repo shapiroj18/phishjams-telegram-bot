@@ -38,10 +38,11 @@ def test_help_message():
 
 def test_code_keyboard():
     assert messages.code_keyboard() == (
-        ["Telegram Bot", "Web App"],
+        ["Telegram Bot", "PhishJams Backend", "PhishJams Frontend"],
         [
-            "https://github.com/shapiroj18/phish-telegram-bot",
-            "https://github.com/shapiroj18/phish-bot",
+            "https://github.com/shapiroj18/phishjams-telegram-bot",
+            "https://github.com/shapiroj18/phishjams-backend",
+            "https://github.com/shapiroj18/phishjams-frontend"
         ],
     )
 

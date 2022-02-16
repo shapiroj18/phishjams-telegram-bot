@@ -1,4 +1,4 @@
-from commands.lib.regex import Regex
+from commands.utils.regex import Regex
 
 regex = Regex()
 

@@ -9,8 +9,8 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-from commands.lib.api_requests import APIRequests
-from commands.lib.regex import Regex
+from commands.utils.api_requests import APIRequests
+from commands.utils.regex import Regex
 
 
 class Messages:
